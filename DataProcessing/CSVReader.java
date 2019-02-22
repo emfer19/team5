@@ -1,3 +1,5 @@
+package DataProcessing;
+
 import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -5,6 +7,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import Interfaces.*;
 
 /* Class: CSVReader
 *   A class for parsing a csv file into DataPoint's from the Market Data Peaks
@@ -49,10 +53,10 @@ public class CSVReader implements IDataHandler {
 
                 //Parse the timestamp to get just the time as a variable
                 String stampParts[] = timestamp.split(" ")[1].split(":"); //Hacky way to get the data, but works for now
-                double hours   = 60.0*Double.parseDouble(stampParts[0]);
-                double minutes = Double.parseDouble(stampParts[1]);
-                double timeIn  = hours + minutes;
-
+                double hours   = 60.0d*60.0d*Double.parseDouble(stampParts[0]);
+                double minutes = 60.0d*Double.parseDouble(stampParts[1]);
+                double nanoSec = 2d*(0.000000001d);
+                double timeIn  = hours + minutes + nanoSec;
                 dataPoints.add(new DataPoint(timeIn, packetAmount));
                 line = buffer.readLine();
             }
