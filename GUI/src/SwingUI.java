@@ -4,12 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.File;
 import javax.swing.*;
 
 public class SwingUI extends JFrame {
 
     private JPanel mainWindow;
     private JButton uploadButton;
+    private JFileChooser csvChooser;
     private JLabel uploadLabel;
     private JTextField parameter1;
 
@@ -20,6 +22,8 @@ public class SwingUI extends JFrame {
     private final String PARAMETER_1_HINT = "Sample Parameter"; //set equal to parameter names/inputs
 
     public SwingUI() {
+
+        final JFileChooser csvChooser = new JFileChooser();
 
         //Initialize new JPanel
         mainWindow = new JPanel();
@@ -39,6 +43,13 @@ public class SwingUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //handle CSV upload HERE
+                int returnValue = csvChooser.showOpenDialog(null);
+                // int returnValue = csvChooser.showSaveDialog(null);
+
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = csvChooser.getSelectedFile();
+                    System.out.println(selectedFile.getAbsolutePath());
+                }
                 uploadLabel.setText(parameter1.getText());
 
             }
