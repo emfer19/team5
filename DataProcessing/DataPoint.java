@@ -1,3 +1,4 @@
+package DataProcessing;
 /* Class: DataPoint
 * @Param long timeIn: Decimal value indicating at what time in minutes
 * of the day the data point was entered into the system (i.e. 0.0 is midnight,
@@ -5,6 +6,8 @@
 * Implements IDataObject and provides a means for tracking
 * individual data points through the simulation.
 */
+
+import Interfaces.IDataObject;
 
 public class DataPoint implements IDataObject{
 
@@ -23,7 +26,7 @@ public class DataPoint implements IDataObject{
     }
 
     public String asString(){
-        return String.format("Value: %d TimeIn: %f", this.value, this.timeIn);
+        return String.format("Value: %d TimeIn: %.9f" , this.value, this.timeIn);
     }
 
 }
