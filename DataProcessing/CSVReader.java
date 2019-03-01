@@ -83,7 +83,7 @@ public class CSVReader implements IDataHandler {
  * printing some information for a sampled file
  */
 public static void  main(String[] args){
-    CSVReader reader = new CSVReader("./sampleMarketData.csv");
+    CSVReader reader = new CSVReader("./DataProdessing/sampleMarketData.csv");
     System.out.println(reader.next().asString());
 }
 
