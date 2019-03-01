@@ -9,8 +9,13 @@ import java.util.Queue;
 public class Buffer implements Runnable {
 
     private static final int MAX_BUFFER_SIZE = 100;
-    private static final String FILE_NAME = "org/team5/app/data/" + "sampleMarketData.csv";
     public static Queue<DataPoint> buffer = new LinkedList<>();
+
+    public String csvFilePath;
+
+    public Buffer(String csvFilePath) {
+        this.csvFilePath = csvFilePath;
+    }
 
     /**
      * This thread reads the org.team5.app.data points into the buffer with a max size specified
@@ -29,7 +34,7 @@ public class Buffer implements Runnable {
     public void run() {
         System.out.println("Buffer Thread running");
 
-        CSVReader reader = new CSVReader(FILE_NAME);
+        CSVReader reader = new CSVReader(csvFilePath);
         int count = 0;
         for (int i = 0; i < reader.dataPoints.size(); i++) {
 

@@ -6,7 +6,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        SwingUI processorWindow = new SwingUI(); //eventually this will this will take in the org.team5.app.data for processing/displaying
+        SwingUI processorWindow = new SwingUI();
         processorWindow.setVisible(true);
     }
 }

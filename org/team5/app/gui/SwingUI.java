@@ -4,8 +4,6 @@ import org.team5.app.main.Buffer;
 import org.team5.app.main.DataProcessor;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
@@ -18,53 +16,51 @@ public class SwingUI extends JFrame {
     private JFileChooser csvChooser;
     private JLabel uploadLabel;
     private JTextField parameter1;
+    private JTextArea textArea;
 
+    //Get dimension of any screen
+    private Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
-    //BE SURE NOT TO SET PARAMETER HINTS TO ANY
-    //POSSIBLE PARAMETER INPUTS AS FOCUS LISTENER
-    //WILL CLEAR IT OUT ON FOCUS IF IT EQUALS THE HINT
     private final String PARAMETER_1_HINT = "Sample Parameter"; //set equal to parameter names/inputs
 
     public SwingUI() {
 
-        final JFileChooser csvChooser = new JFileChooser();
+        initComponents();
+    }
 
-        //Initialize new JPanel
-        mainWindow = new JPanel();
+    public void initComponents() {
+        //Initialze the filechooser
+        csvChooser = new JFileChooser();
+
+        //Initialize the text area to display the csv file
+        textArea = new JTextArea();
 
         //Setting frame properties
         setTitle("Processor");
-        setSize(800, 600);
+        setSize(getScreenWidth() / 2 + 100, getScreenHeight() / 2 + 100);
         setResizable(false);
-        setDefaultCloseOperation(this.EXIT_ON_CLOSE);
-        setVisible(true);
+        setLocationRelativeTo(null);
 
         //Initialize upload button
         uploadButton = new JButton("Upload CSV");
 
-        //add listener
-        ActionListener uploadButtonListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //handle CSV upload HERE
-                int returnValue = csvChooser.showOpenDialog(null);
+        //add action listener
+        uploadButton.addActionListener(e -> {
+            //handle CSV upload HERE
+            int returnValue = csvChooser.showOpenDialog(null);
 
-                if (returnValue == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = csvChooser.getSelectedFile();
-                    System.out.println(selectedFile.getAbsolutePath());
-                }
-                uploadLabel.setText(parameter1.getText());
-                
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = csvChooser.getSelectedFile();
+
+                String csvFilePath = selectedFile.getAbsolutePath();
+                uploadLabel.setText(csvFilePath);
+
                 //Call the startProcessing() function here
-                startProcessing();
-
+                startProcessing(csvFilePath);
             }
-        };
+        });
 
-        uploadButton.addActionListener(uploadButtonListener);
-
-        uploadLabel = new JLabel("Upload your CSV org.team5.app.data file here");
-
+        uploadLabel = new JLabel("Upload your CSV file here");
 
         //Initialize text box
         parameter1 = new JTextField(PARAMETER_1_HINT);
@@ -74,7 +70,7 @@ public class SwingUI extends JFrame {
         FocusListener parameter1Focus = new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (parameter1.getText().equals(PARAMETER_1_HINT)){
+                if (parameter1.getText().equals(PARAMETER_1_HINT)) {
                     parameter1.setText("");
                     parameter1.setForeground(Color.black);
                 }
@@ -91,20 +87,35 @@ public class SwingUI extends JFrame {
 
         parameter1.addFocusListener(parameter1Focus);
 
-        getContentPane().add(mainWindow);
-
+        //Initialize new JPanel and the components
+        mainWindow = new JPanel();
         mainWindow.add(uploadButton);
         mainWindow.add(uploadLabel);
         mainWindow.add(parameter1);
+
+
+        //add the panel to the content pane of our frame
+        super.getContentPane().add(mainWindow);
+
+        //Finally display the frame and make sure the application exits in the background when closed
+        setVisible(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void startProcessing()
-    {
+    private int getScreenWidth() {
+        return dim.width;
+    }
+
+    private int getScreenHeight() {
+        return dim.height;
+    }
+
+    public void startProcessing(String csvFilePath) {
         Thread mainThread = Thread.currentThread();
         // getting name of Main thread
         System.out.println("Current thread: " + mainThread.getName());
 
-        Buffer buffer = new Buffer();
+        Buffer buffer = new Buffer(csvFilePath);
         Thread bufferThread = new Thread(buffer);
         bufferThread.start();
 
