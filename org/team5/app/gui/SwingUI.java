@@ -1,5 +1,9 @@
+package org.team5.app.gui;
+
+import org.team5.app.main.Buffer;
+import org.team5.app.main.DataProcessor;
+
 import java.awt.*;
-import java.awt.Event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -44,20 +48,22 @@ public class SwingUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 //handle CSV upload HERE
                 int returnValue = csvChooser.showOpenDialog(null);
-                // int returnValue = csvChooser.showSaveDialog(null);
 
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = csvChooser.getSelectedFile();
                     System.out.println(selectedFile.getAbsolutePath());
                 }
                 uploadLabel.setText(parameter1.getText());
+                
+                //Call the startProcessing() function here
+                startProcessing();
 
             }
         };
 
         uploadButton.addActionListener(uploadButtonListener);
 
-        uploadLabel = new JLabel("Upload your CSV data file here");
+        uploadLabel = new JLabel("Upload your CSV org.team5.app.data file here");
 
 
         //Initialize text box
@@ -90,5 +96,28 @@ public class SwingUI extends JFrame {
         mainWindow.add(uploadButton);
         mainWindow.add(uploadLabel);
         mainWindow.add(parameter1);
+    }
+
+    public void startProcessing()
+    {
+        Thread mainThread = Thread.currentThread();
+        // getting name of Main thread
+        System.out.println("Current thread: " + mainThread.getName());
+
+        Buffer buffer = new Buffer();
+        Thread bufferThread = new Thread(buffer);
+        bufferThread.start();
+
+        try {
+            buffer.checkSize();
+            mainThread.join(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        buffer.checkSize();
+
+        DataProcessor.processBufferData();
+
+        buffer.checkSize();
     }
 }

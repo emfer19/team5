@@ -1,29 +1,12 @@
-//package main.app;
+package org.team5.app.main;
 
-import main.app.Buffer;
+import org.team5.app.gui.SwingUI;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        Thread mainThread = Thread.currentThread();
-        // getting name of Main thread
-        System.out.println("Current thread: " + mainThread.getName());
-
-        Buffer buffer = new Buffer();
-        Thread bufferThread = new Thread(buffer);
-        bufferThread.start();
-
-        try {
-            buffer.checkSize();
-            mainThread.join(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        buffer.checkSize();
-
-        DataProcessor.processBufferData();
-
-        buffer.checkSize();
+        SwingUI processorWindow = new SwingUI(); //eventually this will this will take in the org.team5.app.data for processing/displaying
+        processorWindow.setVisible(true);
     }
 }

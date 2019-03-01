@@ -1,4 +1,6 @@
-package main.app;
+package org.team5.app.main;
+
+import org.team5.app.dataprocessing.DataPoint;
 
 public class DataProcessor {
 
@@ -13,7 +15,7 @@ public class DataProcessor {
 
             long startTime = System.nanoTime();
             DataPoint dataPoint = Buffer.remove(); //Get and remove the next element on the buffer queue
-            //Perform action with data point
+            //Perform action with org.team5.app.data point
 
             long timeNow = System.nanoTime();
             long estimatedTime = timeNow - startTime;

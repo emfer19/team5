@@ -1,9 +1,11 @@
+package org.team5.app.dataprocessing;
+
 /* Class: DataPoint
 * @Param long timeIn: Decimal value indicating at what time in minutes
-* of the day the data point was entered into the system (i.e. 0.0 is midnight,
+* of the day the org.team5.app.data point was entered into the system (i.e. 0.0 is midnight,
 * 720.0 would be noon, and 1439 would be 11:59PM)
 * Implements IDataObject and provides a means for tracking
-* individual data points through the simulation.
+* individual org.team5.app.data points through the simulation.
 */
 
 public class DataPoint implements IDataObject{
