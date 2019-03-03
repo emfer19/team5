@@ -1,12 +1,15 @@
 package org.team5.app.gui;
 
-import org.team5.app.main.Buffer;
-import org.team5.app.main.DataProcessor;
+import org.team5.app.dataprocessing.DataPoint;
+import org.team5.app.main.InputThread;
+import org.team5.app.main.ProcessingThread;
 
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import javax.swing.*;
 
 public class SwingUI extends JFrame {
@@ -17,6 +20,10 @@ public class SwingUI extends JFrame {
     private JLabel uploadLabel;
     private JTextField parameter1;
     private JTextArea textArea;
+
+    private JProgressBar progressBar;
+    private static int min = 0;
+    private static int max = 100;
 
     //Get dimension of any screen
     private Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -31,6 +38,11 @@ public class SwingUI extends JFrame {
     public void initComponents() {
         //Initialze the filechooser
         csvChooser = new JFileChooser();
+
+        //Initialize the progress bar
+        progressBar = new JProgressBar();
+        progressBar.setMinimum(min);
+        progressBar.setMaximum(max);
 
         //Initialize the text area to display the csv file
         textArea = new JTextArea();
@@ -92,7 +104,7 @@ public class SwingUI extends JFrame {
         mainWindow.add(uploadButton);
         mainWindow.add(uploadLabel);
         mainWindow.add(parameter1);
-
+        mainWindow.add(progressBar);
 
         //add the panel to the content pane of our frame
         super.getContentPane().add(mainWindow);
@@ -110,26 +122,23 @@ public class SwingUI extends JFrame {
         return dim.height;
     }
 
-    public void startProcessing(String csvFilePath) {
-        /*Thread mainThread = Thread.currentThread();
-        // getting name of Main thread
-        System.out.println("Current thread: " + mainThread.getName());*/
+    /**
+     * @param csvFilePath the path to the CSV file
+     */
+    private void startProcessing(String csvFilePath) {
 
-        Buffer buffer = new Buffer(csvFilePath);
-        Thread bufferThread = new Thread(buffer);
-        bufferThread.start();
+         // A blocking queue buffer if size 1000 that is thread safe. It supports operations that wait for
+         // the queue to become non-empty when retrieving an element, and wait for space to become available
+         // in the queue when storing an element.
+         BlockingQueue<DataPoint> buffer = new ArrayBlockingQueue<>(1000,true);
 
-/*        try {
-            buffer.checkSize();
-            mainThread.join(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
+         //Creat the input and processing threads
+        InputThread inputThread = new InputThread(buffer,csvFilePath);
+        ProcessingThread processingThread = new ProcessingThread(buffer);
 
-        //buffer.checkSize();
-
-        //DataProcessor.processBufferData();
-
-        //buffer.checkSize();
+        //Start the input thread
+        new Thread(inputThread).start();
+        //Start the data processing thread
+        new Thread(processingThread).start();
     }
 }

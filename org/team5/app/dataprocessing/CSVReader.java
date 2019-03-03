@@ -61,6 +61,11 @@ public class CSVReader implements IDataHandler {
                 dataPoints.add(new DataPoint(timeIn, packetAmount));
                 line = buffer.readLine();
             }
+
+            // This values mark the end of the array list to be stored in the buffer.
+            // This is going to be useful in ProcessingThread.java class to check for
+            // the end of the buffer.
+            dataPoints.add(new DataPoint(-1, -1));
         }
 
         catch (IOException ioe) {
