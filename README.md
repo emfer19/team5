@@ -18,7 +18,7 @@ We have decided to adopt "multiples of 2" technique for assigning story points.
 E.g, 1, 2, 4, 8, 16....
 
 ## Build and Run
-*In order to run this project, you will need to have a java compiler installer OR IntelliJ (IDE we have chosen to use) as well as a Java Development Kit (JDK)*
+*In order to run this project, you will need to have a Java compiler installed OR IntelliJ (IDE we have chosen to use) as well as a Java Development Kit (JDK)*
 
 For this project, we have decided to use [IntelliJ](https://www.jetbrains.com/idea/download/) to create a Java project and to run our program.
 
