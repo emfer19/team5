@@ -2,7 +2,7 @@
 
 We have decided to do this project in Java
 
-## Tasks
+### Tasks
 See Issues to view tasks.
 We have set a milestone for the Sprint 1 meeting.
 
