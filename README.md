@@ -19,8 +19,6 @@ E.g, 1, 2, 4, 8, 16....
 
 ## Build and Run
 
-### Build
+For this project, we have decided to use [IntelliJ](https://www.jetbrains.com/idea/download/) to create a Java project and to run our program.
 
-
-
-### Run
+You can directly create an IntelliJ Java project from Github and then navigate to the [main class file](insert relative link here) and run the main function.
