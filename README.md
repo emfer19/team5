@@ -22,4 +22,4 @@ E.g, 1, 2, 4, 8, 16....
 
 For this project, we have decided to use [IntelliJ](https://www.jetbrains.com/idea/download/) to create a Java project and to run our program.
 
-You can directly create an IntelliJ Java project from Github and then navigate to the [main class file](./org/team5/app/main/Main.java) and run the main function.
+You can directly create an IntelliJ Java project (in IntelliJ) from Github repository and then navigate to the [main class file](./org/team5/app/main/Main.java) and run the main function.
