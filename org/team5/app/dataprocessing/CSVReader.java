@@ -75,6 +75,11 @@ public class CSVReader implements IDataHandler {
         this.current = 0;
     }
 
+    public int getDataSize()
+    {
+        return dataPoints.size();
+    }
+
     public IDataObject next() {
         if (current < dataPoints.size()) {
             return (dataPoints.get(current++));
@@ -84,7 +89,7 @@ public class CSVReader implements IDataHandler {
     }
 
     /*
-     * A short org.team5.app.main function that may be called to test a simple case by printing
+     * A short main function that may be called to test a simple case by printing
      * some information for a sampled file
      */
     public static void main(String[] args) {
