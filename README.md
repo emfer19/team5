@@ -9,3 +9,13 @@ We have set a milestone for the Sprint 1 meeting.
 #### Story Points
 We have decided to adopt "multiples of 2" technique for assigning story points.
 E.g, 1, 2, 4, 8, 16....
+
+## Build and Run
+
+### Build
+
+
+
+### Run
+
+
