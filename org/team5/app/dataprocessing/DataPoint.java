@@ -27,5 +27,7 @@ public class DataPoint implements IDataObject{
     public String asString(){
         return String.format("Value: %d TimeIn: %f", this.value, this.timeIn);
     }
-
+    public int getValue() {
+        return value;
+    }
 }

@@ -111,24 +111,25 @@ public class SwingUI extends JFrame {
     }
 
     public void startProcessing(String csvFilePath) {
-        Thread mainThread = Thread.currentThread();
+        /*Thread mainThread = Thread.currentThread();
         // getting name of Main thread
-        System.out.println("Current thread: " + mainThread.getName());
+        System.out.println("Current thread: " + mainThread.getName());*/
 
         Buffer buffer = new Buffer(csvFilePath);
         Thread bufferThread = new Thread(buffer);
         bufferThread.start();
 
-        try {
+/*        try {
             buffer.checkSize();
             mainThread.join(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
-        buffer.checkSize();
+        }*/
 
-        DataProcessor.processBufferData();
+        //buffer.checkSize();
 
-        buffer.checkSize();
+        //DataProcessor.processBufferData();
+
+        //buffer.checkSize();
     }
 }

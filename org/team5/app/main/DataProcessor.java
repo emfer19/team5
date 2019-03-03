@@ -6,19 +6,30 @@ public class DataProcessor {
 
     public static void processBufferData() {
 
-        String line;
         int count = 0;
         long sumProcessTime = 0;
+        long sleepTime = 100; //in millisecond
 
         int size = Buffer.buffer.size();
         for (int i = 0; i < size; i++) {
 
-            long startTime = System.nanoTime();
-            DataPoint dataPoint = Buffer.remove(); //Get and remove the next element on the buffer queue
-            //Perform action with org.team5.app.data point
+            long startTime = System.nanoTime(); //Get nano time just before removing message data from buffer
+            DataPoint dataPoint = Buffer.remove();
+            int dataRate = dataPoint.getValue();
+            System.out.println("Message Rate: " + dataRate);
+            //-------------------------------
+            //Do some processing around this point, maybe
 
-            long timeNow = System.nanoTime();
-            long estimatedTime = timeNow - startTime;
+
+            try {
+                Thread.sleep(sleepTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            //---------------------------------
+            long timeNow = System.nanoTime(); //get current nano time after the processing above
+            long estimatedTime = timeNow - startTime; //This gives time spent per message data
 
             //System.out.println("Time to process message[" + count + "] (ns): " + estimatedTime);
             sumProcessTime += estimatedTime;
