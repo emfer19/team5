@@ -7,15 +7,15 @@ import java.util.concurrent.BlockingQueue;
 
 public class InputThread implements Runnable {
 
-    private String csvFilePath;
+    private CSVReader reader;
     private BlockingQueue<DataPoint> buffer;
 
     /**
      * @param buffer the blocking queue buffer that holds message rates per time
-     * @param csvFilePath path to the csv file to be read
+     * @param reader the csv objects
      */
-    public InputThread(BlockingQueue<DataPoint> buffer, String csvFilePath) {
-        this.csvFilePath = csvFilePath;
+    public InputThread(BlockingQueue<DataPoint> buffer, CSVReader reader) {
+        this.reader = reader;
         this.buffer = buffer;
     }
 
@@ -33,8 +33,6 @@ public class InputThread implements Runnable {
     @Override
     public void run() {
         System.out.println("InputThread running");
-
-        CSVReader reader = new CSVReader(csvFilePath);
 
         for (int i = 0; i < reader.dataPoints.size(); i++) {
 

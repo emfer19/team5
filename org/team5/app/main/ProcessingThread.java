@@ -1,6 +1,8 @@
 package org.team5.app.main;
 
+import org.team5.app.dataprocessing.CSVReader;
 import org.team5.app.dataprocessing.DataPoint;
+import org.team5.app.gui.SwingUI;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -28,7 +30,8 @@ public class ProcessingThread implements Runnable {
 
         long sumProcessTime = 0;
         long sumMessageRates = 0;
-        long sleepTime = 10; //in millisecond
+        long sleepTime = 100; //in millisecond
+        int progressBarUpdater = 0;
 
         try {
 
@@ -55,6 +58,10 @@ public class ProcessingThread implements Runnable {
                 long estimatedTime = timeNow - startTime; //This gives time spent per message data
 
                 sumProcessTime += estimatedTime;
+
+                progressBarUpdater++;
+
+                SwingUI.updateProgressBar(progressBarUpdater);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -63,5 +70,6 @@ public class ProcessingThread implements Runnable {
         System.out.println("No of Messages: " + sumMessageRates);
         System.out.println("Average latency (ns): " + (double) sumProcessTime / sumMessageRates);
         System.out.println("Throughput (Messages/sec): " + (double) sumMessageRates / (sumProcessTime *1e-9));
+        System.out.println("percent: " + progressBarUpdater);
     }
 }

@@ -1,5 +1,6 @@
 package org.team5.app.gui;
 
+import org.team5.app.dataprocessing.CSVReader;
 import org.team5.app.dataprocessing.DataPoint;
 import org.team5.app.main.InputThread;
 import org.team5.app.main.ProcessingThread;
@@ -21,9 +22,7 @@ public class SwingUI extends JFrame {
     private JTextField parameter1;
     private JTextArea textArea;
 
-    private JProgressBar progressBar;
-    private static int min = 0;
-    private static int max = 100;
+    private static JProgressBar progressBar;
 
     //Get dimension of any screen
     private Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -41,8 +40,6 @@ public class SwingUI extends JFrame {
 
         //Initialize the progress bar
         progressBar = new JProgressBar();
-        progressBar.setMinimum(min);
-        progressBar.setMaximum(max);
 
         //Initialize the text area to display the csv file
         textArea = new JTextArea();
@@ -114,6 +111,10 @@ public class SwingUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    public static void updateProgressBar(int value) {
+        progressBar.setValue(value);
+    }
+
     private int getScreenWidth() {
         return dim.width;
     }
@@ -127,18 +128,24 @@ public class SwingUI extends JFrame {
      */
     private void startProcessing(String csvFilePath) {
 
-         // A blocking queue buffer if size 1000 that is thread safe. It supports operations that wait for
-         // the queue to become non-empty when retrieving an element, and wait for space to become available
-         // in the queue when storing an element.
-         BlockingQueue<DataPoint> buffer = new ArrayBlockingQueue<>(1000,true);
+        // A blocking queue buffer if size 1000 that is thread safe. It supports operations that wait for
+        // the queue to become non-empty when retrieving an element, and wait for space to become available
+        // in the queue when storing an element.
+        BlockingQueue<DataPoint> buffer = new ArrayBlockingQueue<>(1000, true);
 
-         //Creat the input and processing threads
-        InputThread inputThread = new InputThread(buffer,csvFilePath);
+        //Read the CSV from the file system
+        CSVReader reader = new CSVReader(csvFilePath);
+
+        //Creat the input thread to load the csv into the buffer
+        InputThread inputThread = new InputThread(buffer, reader);
+
+        //Creat the processing thread to fetch data from buffer concurrently
         ProcessingThread processingThread = new ProcessingThread(buffer);
+        progressBar.setMaximum(reader.getDataSize() - 1); // -1 added to cater for the extra (-1,-1) data point added to the array list in CSVReader
 
         //Start the input thread
         new Thread(inputThread).start();
-        //Start the data processing thread
+        //Start the processing thread
         new Thread(processingThread).start();
     }
 }
