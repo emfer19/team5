@@ -8,6 +8,7 @@ public class DataProcessor {
 
         int count = 0;
         long sumProcessTime = 0;
+        long sumMessageRates = 0;
         long sleepTime = 100; //in millisecond
 
         int size = Buffer.buffer.size();
@@ -16,11 +17,10 @@ public class DataProcessor {
             long startTime = System.nanoTime(); //Get nano time just before removing message data from buffer
             DataPoint dataPoint = Buffer.remove();
             int dataRate = dataPoint.getValue();
+            sumMessageRates += dataRate;
             System.out.println("Message Rate: " + dataRate);
             //-------------------------------
             //Do some processing around this point, maybe
-
-
             try {
                 Thread.sleep(sleepTime);
             } catch (InterruptedException e) {
@@ -37,8 +37,8 @@ public class DataProcessor {
         }
 
         System.out.println();
-        System.out.println("Total Processing Time (ns): " + sumProcessTime);
-        System.out.println("No of Messages: " + count);
-        System.out.println("Average Processing Time (ns): " + (double) sumProcessTime / count);
+        System.out.println("Total latency (ns): " + sumProcessTime);
+        System.out.println("No of Messages: " + sumMessageRates);
+        System.out.println("Average latency (ns): " + (double) sumProcessTime / sumMessageRates);
     }
 }
