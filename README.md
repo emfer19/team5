@@ -19,3 +19,7 @@ E.g, 1, 2, 4, 8, 16....
 ### Run
 
 
+- [x] @mentions, #refs, [links](), **formatting**, and <del>tags</del> supported
+- [x] list syntax required (any unordered or ordered list supported)
+- [x] this is a complete item
+- [ ] this is an incomplete item
