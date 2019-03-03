@@ -33,7 +33,7 @@ public class DataProcessor {
 
             //System.out.println("Time to process message[" + count + "] (ns): " + estimatedTime);
             sumProcessTime += estimatedTime;
-            count++;
+            //count++;
         }
 
         System.out.println();
