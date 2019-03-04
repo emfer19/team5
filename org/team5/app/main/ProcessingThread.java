@@ -45,6 +45,9 @@ public class ProcessingThread implements Runnable {
 
             DataPoint messageRate;
             SimClock clock = new SimClock(processTime);
+            
+            messageRate = buffer.take();
+            int message[2] = {0, 0};
             //Note: value of -1 marks the end of the buffer content.
             while (messageRate.getValue() != -1) {
 
@@ -55,6 +58,7 @@ public class ProcessingThread implements Runnable {
                 //First startup
                 if(!primed){
                     clock.setStartTime(messageRate.getTimeIn());
+                    messageRate = buffer
                     primed = true;
                 }
                 //Updating clock
