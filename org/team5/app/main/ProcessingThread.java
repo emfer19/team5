@@ -4,7 +4,7 @@ import org.team5.app.dataprocessing.CSVReader;
 import org.team5.app.dataprocessing.DataPoint;
 import org.team5.app.gui.SwingUI;
 
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class ProcessingThread implements Runnable {
@@ -30,7 +30,7 @@ public class ProcessingThread implements Runnable {
     public void run() {
 
         SwingUI.uploadButton.setEnabled(false);
-        SwingUI.textArea.setText(null);
+//        SwingUI.textArea.setText(100*" ");
 
         long sumProcessTime = 0;
         long sumMessageRates = 0;
@@ -38,9 +38,10 @@ public class ProcessingThread implements Runnable {
         int progressBarUpdater = 0;
         
         boolean primed = false;
+        double timeStart = 0;
         double processTime = 2d*(0.000000001d); //Change this to the input from the window
         DataAnalyzer analyzer = new DataAnalyzer();
-        ArrayBlockingQueue<double[]> bufferedMessages = new ArrayBlockingQueue<double[]>(10000000);
+        LinkedBlockingQueue<double[]> bufferedMessages = new LinkedBlockingQueue<double[]>();
         
         try {
 
@@ -59,6 +60,7 @@ public class ProcessingThread implements Runnable {
                 //First startup
                 if(!primed){
                     clock.setTime(messageRate.getTimeIn());
+                    timeStart = messageRate.getTimeIn();
                     bufferedMessages.add(new double[]{messageRate.getValue(), clock.getTime()});
                     primed = true;
                 }
@@ -81,13 +83,13 @@ public class ProcessingThread implements Runnable {
                 else{
                     message[0]--;
                 }
-                if(message[0] < 0){
+                if(clock.getTime() > timeStart+60){
                     break;
                 }
                 
                 //Recording Stats
                 analyzer.writeData(message[1], clock.getTime());
-                
+                SwingUI.textArea.setText(String.format("%s\nTime left: %.9f", analyzer.printStats(), (startTime+60)-clock.getTime() ) );
                 // Let's just simulate work time with Thread.sleep()
                 //---------------------------------
                 // End simulation

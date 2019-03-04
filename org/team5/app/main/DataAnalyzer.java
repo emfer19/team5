@@ -18,7 +18,7 @@ public class DataAnalyzer{
         double latency = timeOut-timeIn;
         
         //update running mean
-        mean  *= (count-1)/count + (latency/count) ;
+        mean  += (latency - mean)/count ;
         
         //update max
         if(latency > max){
@@ -27,6 +27,6 @@ public class DataAnalyzer{
     }
     
     public String printStats(){
-        return String.format("Average Latency: %.9f\nMax Latency: %.9f", mean, max);
+        return String.format("Average Latency: %.9f\n Max Latency: %.9f\n", mean, max);
     }
 }
