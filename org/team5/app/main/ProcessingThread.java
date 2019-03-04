@@ -1,6 +1,5 @@
 package org.team5.app.main;
 
-import org.team5.app.dataprocessing.CSVReader;
 import org.team5.app.dataprocessing.DataPoint;
 import org.team5.app.gui.SwingUI;
 
