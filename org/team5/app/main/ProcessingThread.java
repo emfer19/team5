@@ -73,15 +73,15 @@ public class ProcessingThread implements Runnable {
                
                 //Updating Data
                 //Update the current set of messages once the program gets through that backlog
-                if(message[1] <= 0){
+                if(message[0] <= 0){
                     if(bufferedMessages.peek() != null){message = bufferedMessages.remove();}
                 }
                 else{
-                    message[1]--;
+                    message[0]--;
                 }
                 
                 //Recording Stats
-                analyzer.writeData(message[0], clock.getTime());
+                analyzer.writeData(message[1], clock.getTime());
                 
                 // Let's just simulate work time with Thread.sleep()
                 try {
