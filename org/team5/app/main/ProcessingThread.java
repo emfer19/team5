@@ -44,7 +44,7 @@ public class ProcessingThread implements Runnable {
             DataPoint messageRate;
             SimClock clock = new SimClock(processTime);
             //Note: value of -1 marks the end of the buffer content.
-            while ((messageRate = buffer.take()).getValue() != -1) {
+            while (messageRate.getValue() != -1) {
 
                 long startTime = System.nanoTime(); //Get nano time just before removing message data from buffer
                 //-------------------------------
