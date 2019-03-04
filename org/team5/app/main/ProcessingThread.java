@@ -58,16 +58,16 @@ public class ProcessingThread implements Runnable {
                     primed = true;
                 }
                 //Updating clock
-                else{
-                    clock.update();
-                    if(clock.isNextMinute()){ //If it's a new minute update the message rate
-                        messageRate = buffer.take()
-                    }
-                    //Adding messages to the buffered data based on the current rate
-                    if(clock.isNextSecond()){
-                        bufferedMessages.add({messageRate.getValue(), clock.getTime()});
-                    }
+               
+                clock.update();
+                if(clock.isNextMinute()){ //If it's a new minute update the message rate
+                    messageRate = buffer.take()
                 }
+                //Adding messages to the buffered data based on the current rate
+                if(clock.isNextSecond()){
+                    bufferedMessages.add({messageRate.getValue(), clock.getTime()});
+                }
+               
                 //Updating Data
                 //Update the current set of messages once the program gets through that backlog
                 if(message[1] <= 0){
