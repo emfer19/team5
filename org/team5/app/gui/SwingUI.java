@@ -1,37 +1,40 @@
 package org.team5.app.gui;
 
+import com.sun.deploy.panel.JavaPanel;
 import org.team5.app.dataprocessing.CSVReader;
 import org.team5.app.dataprocessing.DataPoint;
 import org.team5.app.main.InputThread;
 import org.team5.app.main.ProcessingThread;
 
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.io.File;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 
 public class SwingUI extends JFrame {
 
+    private static JProgressBar progressBar;
     private JPanel mainWindow;
-    private JButton uploadButton;
+    private JPanel topInputPanel;
+    private JPanel bottomOutputPanel;
+    public static JButton uploadButton;
     private JFileChooser csvChooser;
     private JLabel uploadLabel;
     private JTextField parameter1;
-    private JTextArea textArea;
-
-    private static JProgressBar progressBar;
-
+    public static JTextArea textArea;
     //Get dimension of any screen
     private Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-    private final String PARAMETER_1_HINT = "Sample Parameter"; //set equal to parameter names/inputs
 
     public SwingUI() {
 
         initComponents();
+    }
+
+    public static void updateProgressBar(int value) {
+        progressBar.setValue(value);
     }
 
     public void initComponents() {
@@ -40,40 +43,71 @@ public class SwingUI extends JFrame {
 
         //Initialize the progress bar
         progressBar = new JProgressBar();
-
-        //Initialize the text area to display the csv file
-        textArea = new JTextArea();
+        progressBar.setStringPainted(true);
 
         //Setting frame properties
         setTitle("Processor");
         setSize(getScreenWidth() / 2 + 100, getScreenHeight() / 2 + 100);
-        setResizable(false);
+        //setResizable(false);
         setLocationRelativeTo(null);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        topInputPanel = new JPanel(new GridBagLayout());
+        topInputPanel.setPreferredSize(new Dimension(getScreenWidth() / 2,getScreenHeight() / 4));
+
+        //Set titled border for top panel
+        TitledBorder title = BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Input");
+        title.setTitleJustification(TitledBorder.LEFT);
+        topInputPanel.setBorder(title);
 
         //Initialize upload button
         uploadButton = new JButton("Upload CSV");
+        gbc.insets = new Insets(5,5,5,5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        topInputPanel.add(uploadButton,gbc);
+
+        uploadLabel = new JLabel();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        topInputPanel.add(uploadLabel,gbc);
 
         //add action listener
         uploadButton.addActionListener(e -> {
             //handle CSV upload HERE
-            int returnValue = csvChooser.showOpenDialog(null);
+            int returnValue = csvChooser.showOpenDialog(this);
 
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = csvChooser.getSelectedFile();
+                if(selectedFile.isFile()) {
 
-                String csvFilePath = selectedFile.getAbsolutePath();
-                uploadLabel.setText(csvFilePath);
-
-                //Call the startProcessing() function here
-                startProcessing(csvFilePath);
+                    String csvFilePath = selectedFile.getAbsolutePath();
+                    try {
+                        if (csvFilePath.substring(csvFilePath.lastIndexOf(".")).equals(".csv")) {
+                            uploadLabel.setText(csvFilePath);
+                            startProcessing(csvFilePath);
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Not a CSV file. Try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    catch (StringIndexOutOfBoundsException ex)
+                    {
+                        JOptionPane.showMessageDialog(this, "Not a valid file type. Try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                        ex.printStackTrace();
+                    }
+                }
             }
         });
 
-        uploadLabel = new JLabel("Upload your CSV file here");
-
         //Initialize text box
-        parameter1 = new JTextField(PARAMETER_1_HINT);
+        /*parameter1 = new JTextField(PARAMETER_1_HINT);
         parameter1.setForeground(Color.gray);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        topInputPanel.add(parameter1,gbc);
 
         //Create a new FocusListener for each Parameter
         FocusListener parameter1Focus = new FocusListener() {
@@ -93,26 +127,53 @@ public class SwingUI extends JFrame {
                 }
             }
         };
-
         parameter1.addFocusListener(parameter1Focus);
+        */
 
-        //Initialize new JPanel and the components
-        mainWindow = new JPanel();
-        mainWindow.add(uploadButton);
-        mainWindow.add(uploadLabel);
-        mainWindow.add(parameter1);
-        mainWindow.add(progressBar);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        topInputPanel.add(progressBar,gbc);
+
+        //Initialize the main panel and set its layout constraints
+        GridBagConstraints gbcMain = new GridBagConstraints();
+        mainWindow = new JPanel(new GridBagLayout());
+
+        gbcMain.insets = new Insets(10,20,10,20);
+        gbcMain.fill = GridBagConstraints.HORIZONTAL;
+        gbcMain.gridx = 0;
+        gbcMain.gridy = 0;
+        mainWindow.add(topInputPanel,gbcMain);
+
+        bottomOutputPanel = new JPanel(new GridBagLayout());
+        title = BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Output");
+        title.setTitleJustification(TitledBorder.LEFT);
+        bottomOutputPanel.setBorder(title);
+
+        gbcMain.fill = GridBagConstraints.HORIZONTAL;
+        gbcMain.gridx = 0;
+        gbcMain.gridy = 1;
+        mainWindow.add(bottomOutputPanel,gbcMain);
+
+        //Initialize the text area to display output
+        GridBagConstraints gbcBottom = new GridBagConstraints();
+        textArea = new JTextArea(10,20);
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+
+        gbcBottom.fill = GridBagConstraints.BOTH;
+        gbcBottom.weightx = 1.0;
+        gbcBottom.weighty = 1.0;
+        bottomOutputPanel.add(scrollPane,gbcBottom);
 
         //add the panel to the content pane of our frame
-        super.getContentPane().add(mainWindow);
+        Container container = super.getContentPane();
+        //container.setLayout(new GridBagLayout());
+        container.add(mainWindow);
 
         //Finally display the frame and make sure the application exits in the background when closed
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
-
-    public static void updateProgressBar(int value) {
-        progressBar.setValue(value);
     }
 
     private int getScreenWidth() {
@@ -141,7 +202,9 @@ public class SwingUI extends JFrame {
 
         //Creat the processing thread to fetch data from buffer concurrently
         ProcessingThread processingThread = new ProcessingThread(buffer);
-        progressBar.setMaximum(reader.getDataSize() - 1); // -1 added to cater for the extra (-1,-1) data point added to the array list in CSVReader
+
+        // -1 added to cater for the extra (-1,-1) data point added to the array list in CSVReader.java class
+        progressBar.setMaximum(reader.getDataSize() - 1);
 
         //Start the input thread
         new Thread(inputThread).start();
