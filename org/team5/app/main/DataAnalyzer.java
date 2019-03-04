@@ -6,13 +6,13 @@ package org.team5.app.main;
  
 public class DataAnalyzer{
     private int count;
-    private long mean;
-    private long max;
-    private long min;
+    private double mean;
+    private double max;
+    private double min;
         
-    public DataAnalzer(){}
+    public DataAnalyzer(){}
     
-    public void writeData(long timeIn, long timeOut){
+    public void writeData(double timeIn, double timeOut){
         count++;
         //latency
         long latency = timeOut-timeIn;
