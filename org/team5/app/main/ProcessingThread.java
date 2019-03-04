@@ -37,7 +37,7 @@ public class ProcessingThread implements Runnable {
         boolean primed = false;
         double processTime = 2d*(0.000000001d); //Change this to the input from the window
         DataAnalyzer analyzer = new DataAnalyzer();
-        bufferedMessages = new Queue<int[2]>();
+        Queue<int[]> bufferedMessages = new Queue<int[]>();
         
         try {
 
@@ -45,7 +45,7 @@ public class ProcessingThread implements Runnable {
             SimClock clock = new SimClock(processTime);
             
             messageRate = buffer.take();
-            int message[2] = {0, 0};
+            int[] message = new int[]{0, 0};
             //Note: value of -1 marks the end of the buffer content.
             while (messageRate.getValue() != -1) {
 
@@ -67,7 +67,7 @@ public class ProcessingThread implements Runnable {
                 }
                 //Adding messages to the buffered data based on the current rate
                 if(clock.isNextSecond()){
-                    bufferedMessages.add({messageRate.getValue(), clock.getTime()});
+                    bufferedMessages.add(new int[]{messageRate.getValue(), clock.getTime()});
                 }
                
                 //Updating Data
