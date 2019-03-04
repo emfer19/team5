@@ -6,7 +6,7 @@ public class SimClock{
     private double time; //The current "time"
     private double deltaTime; //The default time increment
     private double minStart; //when the last "minute" started
-    
+    private double secStart; //For tracking seconds    
     /*
     * @param td: the default time increment when calling SimClock.update()
     */
@@ -23,7 +23,17 @@ public class SimClock{
     // returns true if the rate should be updated
     public boolean isNextMinute(){
         if(minStart+60 < time){
-            mineStart = time;
+            minStart = time;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    
+    public boolean isNextSecond(){
+        if(secStart+1 > time){
+            secStart = time;
             return true;
         }
         else{
@@ -35,6 +45,7 @@ public class SimClock{
     public void setTime(double firstTime){
         time = firstTime;
         minStart = firstTime;
+        secStart = firstTime;
     }
     
     //returns the current "time"
