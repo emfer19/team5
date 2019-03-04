@@ -28,6 +28,9 @@ public class ProcessingThread implements Runnable {
     @Override
     public void run() {
 
+        SwingUI.uploadButton.setEnabled(false);
+        SwingUI.textArea.setText(null);
+
         long sumProcessTime = 0;
         long sumMessageRates = 0;
         long sleepTime = 100; //in millisecond
@@ -66,10 +69,12 @@ public class ProcessingThread implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("Total latency (ns): " + sumProcessTime);
-        System.out.println("No of Messages: " + sumMessageRates);
-        System.out.println("Average latency (ns): " + (double) sumProcessTime / sumMessageRates);
-        System.out.println("Throughput (Messages/sec): " + (double) sumMessageRates / (sumProcessTime *1e-9));
-        System.out.println("percent: " + progressBarUpdater);
+
+        SwingUI.textArea.append("Total latency (ns): " + sumProcessTime+"\n");
+        SwingUI.textArea.append("No of Messages: " + sumMessageRates+"\n");
+        SwingUI.textArea.append("Average latency (ns): " + (double) sumProcessTime / sumMessageRates+"\n");
+        SwingUI.textArea.append("Throughput (Messages/sec): " + (double) sumMessageRates / (sumProcessTime *1e-9)+"\n");
+
+        SwingUI.uploadButton.setEnabled(true);
     }
 }
