@@ -1,25 +1,49 @@
-# Team 5: Cletus, Emily, Holden
+# Monolythic Simulation System
 
-We have decided to do this project in Java
+> Sprint-1 deliverable for the market data simulation project (SLU Software Engineering class, Spring 2019)
 
-#### Tasks
-See Issues to view tasks.
-We have set a milestone for the Sprint 1 meeting.
+## Getting Started
 
-[need to add tasks here that we got done]
-- [x] @mentions, #refs, [links](), **formatting**, and <del>tags</del> supported
-- [x] list syntax required (any unordered or ordered list supported)
-- [x] this is a complete item
-- [ ] this is an incomplete item
+These instructions will help you get started with the project. It details how to have it running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+You will need to have these tools and platforms installed before doing local development. This project has been co-developmed on both Ubuntu 16.04LTS and Windows 10 operating system. Any OS with the below prerequisits installed should be fine.
+
+```
+Java (v >= 1.8)
+Git
+IntelliJ IDEA or any other Java IDE
+```
+
+### Installing or Cloning 
+The best way to run this project is to clone direclty into IntelliJ IDEA or any other Java IDE.
+
+> Clone
+
+```
+git clone https://github.com/emfer19/team5.git
+```
+
+## Built With
+
+* [IntelliJI IDEA](https://www.jetbrains.com/idea/) - Java development environment version 2018.3
+* [Java](https://www.java.com/en/)  - Java version 1.8
+
+## Contributing
+
+Please read the [wiki](https://github.com/emfer19/team5/wiki/Project-Git-Setup-Guide) for details about contributing to this project and submitting pull requests to us.
 
 
-#### Story Points
-We have decided to adopt "multiples of 2" technique for assigning story points.
-E.g, 1, 2, 4, 8, 16....
+## Authors
 
-## Build and Run
-*In order to run this project, you will need to have a Java compiler installed OR IntelliJ (IDE we have chosen to use) as well as a Java Development Kit (JDK)*
+* [**Cletus Ajibade**](https://github.com/cletusajibade)
+* [**Emily Ferretti**](https://github.com/emfer19)
+* [**Holden Duncan**](https://github.com/holdenduncan)
 
-For this project, we have decided to use [IntelliJ](https://www.jetbrains.com/idea/download/) to create a Java project and to run our program.
 
-You can directly create an IntelliJ Java project (in IntelliJ) from Github repository and then navigate to the [main class file](./org/team5/app/main/Main.java) and run the main function.
+## Acknowledgments
+
+* Kate Holdener, Ph.D, your Software Engineering classes have been awesome
+* Open source communinty for the reusable code out there
+* our class mates who have contributed to this project one way or another
