@@ -15,18 +15,18 @@ public class DataAnalyzer{
     public void writeData(double timeIn, double timeOut){
         count++;
         //latency
-        long latency = timeOut-timeIn;
+        double latency = timeOut-timeIn;
         
         //update running mean
         mean  *= (count-1)/count + (latency/count) ;
         
         //update max
         if(latency > max){
-            max = lantency;
+            max = latency;
         }
     }
     
-    public void printStats(){
-        System.out.println(String.format("Average Latency: %.9f\nMax Latency: %.9f", mean, max));
+    public String printStats(){
+        return String.format("Average Latency: %.9f\nMax Latency: %.9f", mean, max);
     }
 }

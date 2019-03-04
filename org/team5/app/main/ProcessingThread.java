@@ -3,7 +3,7 @@ package org.team5.app.main;
 import org.team5.app.dataprocessing.DataPoint;
 import org.team5.app.gui.SwingUI;
 
-import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class ProcessingThread implements Runnable {
@@ -39,7 +39,7 @@ public class ProcessingThread implements Runnable {
         boolean primed = false;
         double processTime = 2d*(0.000000001d); //Change this to the input from the window
         DataAnalyzer analyzer = new DataAnalyzer();
-        Queue<double[]> bufferedMessages = new Queue<double[]>();
+        ArrayBlockingQueue<double[]> bufferedMessages = new ArrayBlockingQueue<double[]>(10000000);
         
         try {
 
@@ -58,6 +58,7 @@ public class ProcessingThread implements Runnable {
                 //First startup
                 if(!primed){
                     clock.setTime(messageRate.getTimeIn());
+                    bufferedMessages.add(new double[]{messageRate.getValue(), clock.getTime()});
                     primed = true;
                 }
                 //Updating clock
@@ -79,18 +80,14 @@ public class ProcessingThread implements Runnable {
                 else{
                     message[0]--;
                 }
+                if(message[0] < 0){
+                    break;
+                }
                 
                 //Recording Stats
                 analyzer.writeData(message[1], clock.getTime());
                 
                 // Let's just simulate work time with Thread.sleep()
-                try {
-                    Thread.sleep(sleepTime);
-                    sumMessageRates += messageRate.getValue();
-                    System.out.println("Take message rate " + messageRate.getValue());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 //---------------------------------
                 // End simulation
                 //---------------------------------
@@ -107,13 +104,12 @@ public class ProcessingThread implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-<<<<<<< HEAD
 
         SwingUI.textArea.append("Total latency (ns): " + sumProcessTime+"\n");
         SwingUI.textArea.append("No of Messages: " + sumMessageRates+"\n");
         SwingUI.textArea.append("Average latency (ns): " + (double) sumProcessTime / sumMessageRates+"\n");
         SwingUI.textArea.append("Throughput (Messages/sec): " + (double) sumMessageRates / (sumProcessTime *1e-9)+"\n");
 
-        SwingUI.uploadButton.setEnabled(true);
+        SwingUI.textArea.append(analyzer.printStats());
     }
 }
