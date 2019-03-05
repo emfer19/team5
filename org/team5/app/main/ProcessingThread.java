@@ -32,7 +32,7 @@ public class ProcessingThread implements Runnable {
 
         long sumProcessTime = 0;
         long sumMessageRates = 0;
-        long sleepTime = 100; //in millisecond
+        long sleepTime = 150; //in millisecond
         int progressBarUpdater = 0;
 
         try {
