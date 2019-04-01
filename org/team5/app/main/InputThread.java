@@ -35,13 +35,19 @@ public class InputThread implements Runnable {
         System.out.println("InputThread running");
 
         for (int i = 0; i < reader.dataPoints.size(); i++) {
-
-            //Start queueing up the message rate in a separate thread
-            try {
-                buffer.put(reader.dataPoints.get(i));
-                System.out.println("Put message rate "+reader.dataPoints.get(i).getValue());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            
+            //This for loop repersents using the given rate in millisecond 
+            //increments for one second.
+            for (int j=0; j<1000; j++){
+                Thread.sleep(1); //Sleep for a millisecond before adding anything 
+                //Start queueing up the message rate in a separate thread
+                try {
+                    //get the time and the rate over 1000 and place it in buffer
+                    buffer.put(new DataPoint(reader.dataPoints.get(i)));
+                    System.out.println("Put message rate "+reader.dataPoints.get(i).getValue());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
