@@ -38,12 +38,13 @@ public class InputThread implements Runnable {
             
             //This for loop repersents using the given rate in millisecond 
             //increments for one second.
+            int rate = reader.dataPoints.get(i).getValue()/1000; //Take the floor/ceiling of this
             for (int j=0; j<1000; j++){
                 Thread.sleep(1); //Sleep for a millisecond before adding anything 
                 //Start queueing up the message rate in a separate thread
                 try {
                     //get the time and the rate over 1000 and place it in buffer
-                    buffer.put(new DataPoint(reader.dataPoints.get(i)));
+                    buffer.put(new DataPoint(rate, GET_CURRENT_TIME));
                     System.out.println("Put message rate "+reader.dataPoints.get(i).getValue());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
