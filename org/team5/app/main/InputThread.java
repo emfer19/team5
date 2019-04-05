@@ -5,6 +5,8 @@ import org.team5.app.dataprocessing.DataPoint;
 
 import java.util.concurrent.BlockingQueue;
 
+import java.lang.System;
+
 public class InputThread implements Runnable {
 
     private CSVReader reader;
@@ -40,12 +42,12 @@ public class InputThread implements Runnable {
             //increments for one second.
             int rate = reader.dataPoints.get(i).getValue()/1000; //Take the floor/ceiling of this
             for (int j=0; j<1000; j++){
-                Thread.sleep(1); //Sleep for a millisecond before adding anything 
                 //Start queueing up the message rate in a separate thread
                 try {
+                    Thread.sleep(1); //Sleep for a millisecond before adding anything 
                     //get the time and the rate over 1000 and place it in buffer
-                    buffer.put(new DataPoint(rate, GET_CURRENT_TIME));
-                    System.out.println("Put message rate "+reader.dataPoints.get(i).getValue());
+                    buffer.put(new DataPoint(System.nanoTime(), rate));
+                    //System.out.println("Put message rate "+reader.dataPoints.get(i).getValue());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
