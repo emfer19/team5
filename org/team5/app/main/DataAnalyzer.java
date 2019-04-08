@@ -1,4 +1,4 @@
-//package org.team5.app.main;
+package org.team5.app.main;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.lang.Math.*;
@@ -58,6 +58,11 @@ public class DataAnalyzer{
         da.writeData(1,3);
         da.writeData(1,4);
         da.writeData(1,5);
+        da.writeData(1,6);
+        da.writeData(1,7);
+        da.writeData(1,8);
+        da.writeData(1,9);
+        da.writeData(1,10);
         System.out.println(da.printStats());
 
     }
