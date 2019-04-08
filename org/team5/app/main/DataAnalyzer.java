@@ -52,7 +52,7 @@ public class DataAnalyzer{
     //A function that easily prints out some relevent stats
     public String printStats(){
         return String.format(
-                "Average Latency: %.9f\nThroughput %.4f\nPercentiles:\n50th: %.9f\n75th: %.9f\n90th: %.9f\n99th: %.9f\n",
+                "Average Latency: %.9f\nThroughput %.4f msg/s\nPercentiles:\n50th: %.9f\n75th: %.9f\n90th: %.9f\n99th: %.9f\n",
                 this.mean(),this.throughput(), this.percentile(50), this.percentile(75), this.percentile(90), this.percentile(99)
             );
     }
