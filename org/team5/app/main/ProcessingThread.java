@@ -1,6 +1,5 @@
 package org.team5.app.main;
 
-import org.team5.app.dataprocessing.CSVReader;
 import org.team5.app.dataprocessing.DataPoint;
 import org.team5.app.gui.SwingUI;
 
@@ -34,7 +33,7 @@ public class ProcessingThread implements Runnable {
 
         long sumProcessTime = 0;
         long sumMessageRates = 0;
-        long sleepTime = 100; //in millisecond
+        long sleepTime = 150; //in millisecond
         int progressBarUpdater = 0;
         
         boolean primed = false;
