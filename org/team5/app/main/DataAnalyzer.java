@@ -43,12 +43,17 @@ public class DataAnalyzer{
         int borderValue = (int)Math.ceil(((double)p / (double)100) * (double)this.count);
         return this.data.get(borderValue-1);
     }
+
+    //Calculate and return the program throughput
+    public double throughput(){
+        return this.count/this.total; //this.total repersents the total amount of latency and thus count/total = messages per second
+    }
     
     //A function that easily prints out some relevent stats
     public String printStats(){
         return String.format(
-                "Average Latency: %.9f\nPercentiles:\n50th: %.9f\n75th: %.9f\n90th: %.9f\n99th: %.9f\n",
-                this.mean(), this.percentile(50), this.percentile(75), this.percentile(90), this.percentile(99)
+                "Average Latency: %.9f\nThroughput %.4f\nPercentiles:\n50th: %.9f\n75th: %.9f\n90th: %.9f\n99th: %.9f\n",
+                this.mean(),this.throughput(), this.percentile(50), this.percentile(75), this.percentile(90), this.percentile(99)
             );
     }
 
