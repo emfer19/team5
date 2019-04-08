@@ -23,6 +23,14 @@ public class DataPoint implements IDataObject {
     public void setTimeOut(double time) {
         this.timeOut = time;
     }
+    
+    public double getTimeOut(){
+        return timeOut;
+    }
+    
+    public double getTimeIn(){
+        return timeIn;
+    }
 
     public String asString() {
         return String.format("Value: %d TimeIn: %f", this.value, this.timeIn);
