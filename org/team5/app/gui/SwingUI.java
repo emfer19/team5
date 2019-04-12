@@ -25,7 +25,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
     private JPanel bottomOutputPanel;
     public static JButton uploadButton;
     private JFileChooser csvChooser;
-    private JLabel uploadLabel;
+    private JLabel uploadLabel, defaultBufferSize, defaultProcessTime;
     private JTextField bufferSize, processTime;
     public static JTextArea textArea;
 
@@ -36,6 +36,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
     private final String BUFFER_SIZE_HINT = "Enter buffer size";
 
     private final int DEFAULT_BUFFER_SIZE = 1000000;
+    private final double DEFAULT_PROCESS_TIME = 1.0; //in millisecond
 
     public SwingUI() {
 
@@ -58,7 +59,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         GridBagConstraints gbc = new GridBagConstraints();
 
         topInputPanel = new JPanel(new GridBagLayout());
-        topInputPanel.setPreferredSize(new Dimension(getScreenWidth() / 2,getScreenHeight() / 4));
+        topInputPanel.setPreferredSize(new Dimension(getScreenWidth() / 2, getScreenHeight() / 4));
 
         //Set titled border for top panel
         TitledBorder title = BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Input");
@@ -68,11 +69,11 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         //Initialize upload button
         uploadButton = new JButton("Upload CSV");
         uploadButton.addActionListener(this);
-        gbc.insets = new Insets(5,5,5,5);
+        gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 0;
-        topInputPanel.add(uploadButton,gbc);
+        topInputPanel.add(uploadButton, gbc);
 
         //Initialize buffer size text box
         bufferSize = new JTextField(BUFFER_SIZE_HINT);
@@ -81,7 +82,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 1;
         gbc.gridy = 0;
-        topInputPanel.add(bufferSize,gbc);
+        topInputPanel.add(bufferSize, gbc);
 
         //Initialize process time text box
         processTime = new JTextField(PROCESS_TIME_HINT);
@@ -90,7 +91,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 2;
         gbc.gridy = 0;
-        topInputPanel.add(processTime,gbc);
+        topInputPanel.add(processTime, gbc);
 
         //Initialize the progress bar
         progressBar = new JProgressBar();
@@ -99,24 +100,39 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 3;
-        topInputPanel.add(progressBar,gbc);
+        topInputPanel.add(progressBar, gbc);
 
+        //This label displaces csv file path
         uploadLabel = new JLabel();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 3;
-        topInputPanel.add(uploadLabel,gbc);
+        topInputPanel.add(uploadLabel, gbc);
+
+        defaultBufferSize = new JLabel();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 3;
+        topInputPanel.add(defaultBufferSize, gbc);
+
+        defaultProcessTime = new JLabel();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 3;
+        topInputPanel.add(defaultProcessTime, gbc);
 
         //Initialize the main panel and set its layout constraints
         GridBagConstraints gbcMain = new GridBagConstraints();
         mainWindow = new JPanel(new GridBagLayout());
 
-        gbcMain.insets = new Insets(10,20,10,20);
+        gbcMain.insets = new Insets(10, 20, 10, 20);
         gbcMain.fill = GridBagConstraints.HORIZONTAL;
         gbcMain.gridx = 0;
         gbcMain.gridy = 0;
-        mainWindow.add(topInputPanel,gbcMain);
+        mainWindow.add(topInputPanel, gbcMain);
 
         bottomOutputPanel = new JPanel(new GridBagLayout());
         title = BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Output");
@@ -126,18 +142,18 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         gbcMain.fill = GridBagConstraints.HORIZONTAL;
         gbcMain.gridx = 0;
         gbcMain.gridy = 1;
-        mainWindow.add(bottomOutputPanel,gbcMain);
+        mainWindow.add(bottomOutputPanel, gbcMain);
 
         //Initialize the text area to display output
         GridBagConstraints gbcBottom = new GridBagConstraints();
-        textArea = new JTextArea(10,20);
+        textArea = new JTextArea(10, 20);
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
 
         gbcBottom.fill = GridBagConstraints.BOTH;
         gbcBottom.weightx = 1.0;
         gbcBottom.weighty = 1.0;
-        bottomOutputPanel.add(scrollPane,gbcBottom);
+        bottomOutputPanel.add(scrollPane, gbcBottom);
 
         //add the panel to the content pane of our frame
         Container container = super.getContentPane();
@@ -167,8 +183,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         // in the queue when storing an element.
         //int buffer_size = Integer.parseInt(bufferSize.getText())DEFAULT_BUFFER_SIZE
         String buff_size = bufferSize.getText();
-        int buff_size_int = (buff_size !=null && !buff_size.equals("") && !buff_size.equals(BUFFER_SIZE_HINT))? Integer.parseInt(buff_size): DEFAULT_BUFFER_SIZE;
-
+        int buff_size_int = (buff_size != null && !buff_size.equals("") && !buff_size.equals(BUFFER_SIZE_HINT)) ? Integer.parseInt(buff_size) : getDefaultBufferSize();
         BlockingQueue<DataPoint> buffer = new ArrayBlockingQueue<>(buff_size_int, true);
 
         //Read the CSV from the file system
@@ -178,7 +193,9 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         InputThread inputThread = new InputThread(buffer, reader);
 
         //Creat the processing thread to fetch data from buffer concurrently
-        ProcessingThread processingThread = new ProcessingThread(buffer);
+        String process_time = processTime.getText();
+        double process_time_int = (process_time != null && !process_time.equals("") && !process_time.equals(PROCESS_TIME_HINT)) ? Double.parseDouble(process_time) : getDefaultProcessTime();
+        ProcessingThread processingThread = new ProcessingThread(buffer, process_time_int);
 
         // -1 added to cater for the extra (-1,-1) data point added to the array list in CSVReader.java class
         progressBar.setMaximum(reader.getDataSize() - 1);
@@ -196,14 +213,12 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
      */
     @Override
     public void focusGained(FocusEvent e) {
-        if(e.getSource() == bufferSize){
+        if (e.getSource() == bufferSize) {
             if (bufferSize.getText().equals(BUFFER_SIZE_HINT)) {
                 bufferSize.setText("");
                 bufferSize.setForeground(Color.black);
             }
-        }
-        else
-        {
+        } else {
             if (processTime.getText().equals(PROCESS_TIME_HINT)) {
                 processTime.setText("");
                 processTime.setForeground(Color.black);
@@ -219,14 +234,12 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
      */
     @Override
     public void focusLost(FocusEvent e) {
-        if(e.getSource() == bufferSize){
+        if (e.getSource() == bufferSize) {
             if (bufferSize.getText().equals("")) {
                 bufferSize.setText(BUFFER_SIZE_HINT);
                 bufferSize.setForeground(Color.gray);
             }
-        }
-        else
-        {
+        } else {
             if (processTime.getText().equals("")) {
                 processTime.setText(PROCESS_TIME_HINT);
                 processTime.setForeground(Color.gray);
@@ -242,7 +255,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource()== uploadButton) {
+        if (e.getSource() == uploadButton) {
             //handle CSV upload here
             int returnValue = csvChooser.showOpenDialog(this);
 
@@ -265,5 +278,17 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
                 }
             }
         }
+    }
+
+    public int getDefaultBufferSize() {
+        String text = "Using default buffer size of: " + DEFAULT_BUFFER_SIZE + " messages";
+        defaultBufferSize.setText(text);
+        return DEFAULT_BUFFER_SIZE;
+    }
+
+    public double getDefaultProcessTime() {
+        String text = "Using default process time of: " + DEFAULT_PROCESS_TIME + " millisecond";
+        defaultProcessTime.setText(text);
+        return DEFAULT_PROCESS_TIME;
     }
 }

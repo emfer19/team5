@@ -9,9 +9,11 @@ import java.util.concurrent.BlockingQueue;
 public class ProcessingThread implements Runnable {
 
     public BlockingQueue<DataPoint> buffer;
+    public double process_time;
 
-    public ProcessingThread(BlockingQueue<DataPoint> buffer) {
+    public ProcessingThread(BlockingQueue<DataPoint> buffer, double process_time) {
         this.buffer = buffer;
+        this.process_time = process_time;
     }
 
     /**
@@ -38,7 +40,8 @@ public class ProcessingThread implements Runnable {
         
         boolean primed = false;
         double timeStart = 0;
-        double processTime = 2d*(0.000000001d); //Change this to the input from the window
+        //double processTime = 2d*(0.000000001d); //Change this to the input from the window
+        double processTime = process_time;
         DataAnalyzer analyzer = new DataAnalyzer();
         LinkedBlockingQueue<double[]> bufferedMessages = new LinkedBlockingQueue<double[]>();
         
