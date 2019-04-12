@@ -1,6 +1,5 @@
 package org.team5.app.gui;
 
-import com.sun.deploy.panel.JavaPanel;
 import org.team5.app.dataprocessing.CSVReader;
 import org.team5.app.dataprocessing.DataPoint;
 import org.team5.app.main.InputThread;
@@ -35,6 +34,8 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
 
     private final String PROCESS_TIME_HINT = "Enter process time";
     private final String BUFFER_SIZE_HINT = "Enter buffer size";
+
+    private final int DEFAULT_BUFFER_SIZE = 1000000;
 
     public SwingUI() {
 
@@ -164,7 +165,11 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         // A blocking queue buffer if size 1000 that is thread safe. It supports operations that wait for
         // the queue to become non-empty when retrieving an element, and wait for space to become available
         // in the queue when storing an element.
-        BlockingQueue<DataPoint> buffer = new ArrayBlockingQueue<>(1000000, true);
+        //int buffer_size = Integer.parseInt(bufferSize.getText())DEFAULT_BUFFER_SIZE
+        String buff_size = bufferSize.getText();
+        int buff_size_int = (buff_size !=null && !buff_size.equals("") && !buff_size.equals(BUFFER_SIZE_HINT))? Integer.parseInt(buff_size): DEFAULT_BUFFER_SIZE;
+
+        BlockingQueue<DataPoint> buffer = new ArrayBlockingQueue<>(buff_size_int, true);
 
         //Read the CSV from the file system
         CSVReader reader = new CSVReader(csvFilePath);
