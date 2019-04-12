@@ -32,6 +32,7 @@ public class ProcessingThread implements Runnable {
 
         SwingUI.uploadButton.setEnabled(false);
         SwingUI.processButton.setEnabled(false);
+        SwingUI.processButton.setText("Processing data...");
         //SwingUI.textArea.setText(100*" ");
 
         long sumProcessTime = 0;
