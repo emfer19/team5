@@ -23,9 +23,9 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
     private JPanel mainWindow;
     private JPanel topInputPanel;
     private JPanel bottomOutputPanel;
-    public static JButton uploadButton;
+    public static JButton uploadButton, processButton;
     private JFileChooser csvChooser;
-    private JLabel uploadLabel, defaultBufferSize, defaultProcessTime;
+    private JLabel filePathLabel, defaultBufferSize, defaultProcessTime;
     private JTextField bufferSize, processTime;
     public static JTextArea textArea;
 
@@ -37,6 +37,8 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
 
     private final int DEFAULT_BUFFER_SIZE = 1000000;
     private final double DEFAULT_PROCESS_TIME = 1.0; //in millisecond
+
+    private String csvFilePath = "";
 
     public SwingUI() {
 
@@ -93,34 +95,42 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         gbc.gridy = 0;
         topInputPanel.add(processTime, gbc);
 
+        filePathLabel = new JLabel();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 3;
+        topInputPanel.add(filePathLabel, gbc);
+
         //Initialize the progress bar
         progressBar = new JProgressBar();
         progressBar.setStringPainted(true);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth = 3;
         topInputPanel.add(progressBar, gbc);
 
-        //This label displaces csv file path
-        uploadLabel = new JLabel();
+        //Initialize process button
+        processButton = new JButton("Process Data");
+        processButton.addActionListener(this);
+        gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 3;
-        topInputPanel.add(uploadLabel, gbc);
+        gbc.gridy = 3;
+        topInputPanel.add(processButton, gbc);
 
         defaultBufferSize = new JLabel();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 3;
         topInputPanel.add(defaultBufferSize, gbc);
 
         defaultProcessTime = new JLabel();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridwidth = 3;
         topInputPanel.add(defaultProcessTime, gbc);
 
@@ -262,12 +272,10 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = csvChooser.getSelectedFile();
                 if (selectedFile.isFile()) {
-
-                    String csvFilePath = selectedFile.getAbsolutePath();
+                    csvFilePath = selectedFile.getAbsolutePath();
                     try {
                         if (csvFilePath.substring(csvFilePath.lastIndexOf(".")).equals(".csv")) {
-                            uploadLabel.setText(csvFilePath);
-                            startProcessing(csvFilePath);
+                            filePathLabel.setText(csvFilePath);
                         } else {
                             JOptionPane.showMessageDialog(this, "Not a CSV file. Try again.", "Error", JOptionPane.ERROR_MESSAGE);
                         }
@@ -277,6 +285,15 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
                     }
                 }
             }
+        }
+        else{
+            if(!csvFilePath.equals(""))
+                startProcessing(csvFilePath);
+            else
+                JOptionPane.showMessageDialog(this, "Upload your CSV data file first." +
+                        "\n\n(Optional) Specify buffer size and process time," +
+                        "\nor use the default values of "+DEFAULT_BUFFER_SIZE+" messages and "+DEFAULT_PROCESS_TIME+" millisecond",
+                        "Message", JOptionPane.ERROR_MESSAGE);
         }
     }
 
