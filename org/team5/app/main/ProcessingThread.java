@@ -118,5 +118,9 @@ public class ProcessingThread implements Runnable {
         SwingUI.textArea.append("Throughput (Messages/sec): " + (double) sumMessageRates / (sumProcessTime *1e-9)+"\n");
 
         SwingUI.textArea.append(analyzer.printStats());
+
+        SwingUI.uploadButton.setEnabled(true);
+        SwingUI.processButton.setEnabled(true);
+        SwingUI.processButton.setText("Process Data");
     }
 }

@@ -96,6 +96,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         topInputPanel.add(processTime, gbc);
 
         filePathLabel = new JLabel();
+        filePathLabel.setVisible(false);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -276,11 +277,14 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
                     try {
                         if (csvFilePath.substring(csvFilePath.lastIndexOf(".")).equals(".csv")) {
                             filePathLabel.setText(csvFilePath);
+                            filePathLabel.setVisible(true);
                         } else {
                             JOptionPane.showMessageDialog(this, "Not a CSV file. Try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                            csvFilePath="";
                         }
                     } catch (StringIndexOutOfBoundsException ex) {
                         JOptionPane.showMessageDialog(this, "Not a valid file type. Try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                        csvFilePath="";
                         ex.printStackTrace();
                     }
                 }
