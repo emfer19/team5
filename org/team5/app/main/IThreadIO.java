@@ -1,4 +1,6 @@
 package org.team5.app.main;
+
+import org.team5.app.dataprocessing.DataPoint;
 /*
 * Interface: IThreadIO
 * Holden Duncan
