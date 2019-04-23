@@ -11,7 +11,7 @@ import org.team5.app.dataprocessing.DataPoint;
 
 public interface IThreadIO {
 
-public void add(DataPoint p); //add should take the data and store it or use it
-public DataPont take(); //take should be called to receive the next piece of data from that object
+public void in(DataPoint p); //add should take the data and store it or use it
+public DataPont out(); //take should be called to receive the next piece of data from that object
 
 }

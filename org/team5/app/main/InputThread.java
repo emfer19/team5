@@ -7,7 +7,7 @@ import java.util.concurrent.BlockingQueue;
 
 import java.lang.System;
 
-public class InputThread implements Runnable {
+public class InputThread implements Runnable, IThreadIO {
 
     private CSVReader reader;
     private BlockingQueue<DataPoint> buffer;
@@ -68,5 +68,15 @@ public class InputThread implements Runnable {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    //Returns the next point in the queue currently
+    public DataPoint out(){
+    
+    }
+    
+    //Takes the input and adds it to the queue
+    public void in(DataPoint p){
+    
     }
 }

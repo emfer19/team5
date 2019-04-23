@@ -2,12 +2,15 @@ package org.team5.app.main;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.lang.Math.*;
+
+!IMPORT DATAPOINT HERE!
+
 /* Author: Holden D
  * DataAnalzyer
  *  Is used for tracking and calculating statistical data point by point
  */
  
-public class DataAnalyzer{
+public class DataAnalyzer implements IThreadIO {
     private int count;
     private double total;
     private double max;
@@ -16,20 +19,24 @@ public class DataAnalyzer{
         
     public DataAnalyzer(){}
     
+    //Dummy function because nothing should take a DataPoint from this
+    //Honestly should throw an error if even called.
+    public DataPoint out(){
+        return NULL;
+    }
+    
+    //Takes a DataPoint and adds consolidates it's data
+    public void in(DataPoint p){
+        this.writeData(p.timeIn, p.timeOut);
+    }
+    
+    //Takes two doubles and  stores the data for later calculations
     public void writeData(double timeIn, double timeOut){
         count++;
         //latency
         double latency = timeOut-timeIn;
         data.add(latency);
         this.total += latency;
-        //update running mean
-       // mean  += (latency - mean)/count ;
-        
-        //update max
-/*        if(latency > max){
-            max = latency;
-*/
-//        }
     }
     
     //Calculate and return the mean
@@ -57,6 +64,7 @@ public class DataAnalyzer{
             );
     }
 
+    //Simple main for playtesting the stat calculation
     public static void main(String[] args){
         DataAnalyzer da = new DataAnalyzer();
         da.writeData(1,2);
