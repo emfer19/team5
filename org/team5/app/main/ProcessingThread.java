@@ -6,7 +6,7 @@ import org.team5.app.gui.SwingUI;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public class ProcessingThread implements Runnable {
+public class ProcessingThread implements Runnable, IThreadIO {
 
     public BlockingQueue<DataPoint> buffer;
     public double process_time;
@@ -14,6 +14,18 @@ public class ProcessingThread implements Runnable {
     public ProcessingThread(BlockingQueue<DataPoint> buffer, double process_time) {
         this.buffer = buffer;
         this.process_time = process_time;
+    }
+    
+    //Is dummy because processor takes in its own time
+    //should probably throw and error
+    public void in(DataPoint p){
+        return;
+    }
+    
+    //Is dummy because processor pushed data forward at its own time
+    //should probably throw an error
+    public DataPoint out(){
+        return NULL;
     }
 
     /**
