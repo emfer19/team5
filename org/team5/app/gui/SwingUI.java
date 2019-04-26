@@ -1,12 +1,14 @@
 package org.team5.app.gui;
 
-import com.sun.deploy.panel.JavaPanel;
+//import com.sun.deploy.panel.JavaPanel;
 import org.team5.app.dataprocessing.CSVReader;
 import org.team5.app.dataprocessing.DataPoint;
 import org.team5.app.main.InputThread;
 import org.team5.app.main.ProcessingThread;
 
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -23,10 +25,11 @@ public class SwingUI extends JFrame {
     public static JButton uploadButton;
     private JFileChooser csvChooser;
     private JLabel uploadLabel;
-    private JTextField parameter1;
+    private JTextField bufferSize;
     public static JTextArea textArea;
     //Get dimension of any screen
     private Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+    private final String BUFFER_SIZE_HINT = "Enter Buffer Size Here";
 
     public SwingUI() {
 
@@ -102,33 +105,33 @@ public class SwingUI extends JFrame {
         });
 
         //Initialize text box
-        /*parameter1 = new JTextField(PARAMETER_1_HINT);
-        parameter1.setForeground(Color.gray);
+        bufferSize = new JTextField(BUFFER_SIZE_HINT);
+        bufferSize.setForeground(Color.gray);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 1;
         gbc.gridy = 1;
-        topInputPanel.add(parameter1,gbc);
+        topInputPanel.add(bufferSize,gbc);
 
         //Create a new FocusListener for each Parameter
-        FocusListener parameter1Focus = new FocusListener() {
+        FocusListener bufferSizeFocus = new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (parameter1.getText().equals(PARAMETER_1_HINT)) {
-                    parameter1.setText("");
-                    parameter1.setForeground(Color.black);
+                if (bufferSize.getText().equals(BUFFER_SIZE_HINT)) {
+                    bufferSize.setText("");
+                    bufferSize.setForeground(Color.black);
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (parameter1.getText().equals("")) {
-                    parameter1.setText(PARAMETER_1_HINT);
-                    parameter1.setForeground(Color.gray);
+                if (bufferSize.getText().equals("")) {
+                    bufferSize.setText(BUFFER_SIZE_HINT);
+                    bufferSize.setForeground(Color.gray);
                 }
             }
         };
-        parameter1.addFocusListener(parameter1Focus);
-        */
+        bufferSize.addFocusListener(bufferSizeFocus);
+
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
@@ -192,7 +195,7 @@ public class SwingUI extends JFrame {
         // A blocking queue buffer if size 1000 that is thread safe. It supports operations that wait for
         // the queue to become non-empty when retrieving an element, and wait for space to become available
         // in the queue when storing an element.
-        BlockingQueue<DataPoint> buffer = new ArrayBlockingQueue<>(10, true);
+        BlockingQueue<DataPoint> buffer = new ArrayBlockingQueue<>(1000000, true);
 
         //Read the CSV from the file system
         CSVReader reader = new CSVReader(csvFilePath);
