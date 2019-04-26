@@ -6,10 +6,7 @@ import org.team5.app.main.InputThread;
 import org.team5.app.main.ProcessingThread;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 import java.io.File;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -17,7 +14,7 @@ import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-public class SwingUI extends JFrame implements FocusListener, ActionListener {
+public class SwingUI extends JFrame implements FocusListener, ActionListener, ItemListener {
 
     private static JProgressBar progressBar;
     private JPanel mainWindow;
@@ -27,6 +24,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
     private JFileChooser csvChooser;
     private JLabel filePathLabel, defaultBufferSize, defaultProcessTime;
     private JTextField bufferSize, processTime;
+    private JCheckBox microsecondData;
     public static JTextArea textArea;
 
     //Get dimension of any screen
@@ -94,6 +92,12 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         gbc.gridx = 2;
         gbc.gridy = 0;
         topInputPanel.add(processTime, gbc);
+
+        //initialize checkbox for microsecond data
+        microsecondData = new JCheckBox("Check this box if data is already in Microseconds");
+        microsecondData.setMnemonic(KeyEvent.VK_MS);
+        microsecondData.addItemListener(this);
+
 
         filePathLabel = new JLabel();
         filePathLabel.setVisible(false);
@@ -255,6 +259,18 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
                 processTime.setText(PROCESS_TIME_HINT);
                 processTime.setForeground(Color.gray);
             }
+        }
+
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        if (e.getStateChange() == ItemEvent.SELECTED) {
+            //run microsecond processor code
+        }
+
+        if (e.getStateChange() == ItemEvent.DESELECTED) {
+            //run code to turn data into microsecond and then run processor code
         }
 
     }
