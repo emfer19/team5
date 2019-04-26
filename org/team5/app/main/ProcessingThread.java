@@ -9,9 +9,11 @@ import java.util.concurrent.BlockingQueue;
 public class ProcessingThread implements Runnable {
 
     public BlockingQueue<DataPoint> buffer;
+    public double process_time;
 
-    public ProcessingThread(BlockingQueue<DataPoint> buffer) {
+    public ProcessingThread(BlockingQueue<DataPoint> buffer, double process_time) {
         this.buffer = buffer;
+        this.process_time = process_time;
     }
 
     /**
@@ -29,7 +31,9 @@ public class ProcessingThread implements Runnable {
     public void run() {
 
         SwingUI.uploadButton.setEnabled(false);
-//        SwingUI.textArea.setText(100*" ");
+        SwingUI.processButton.setEnabled(false);
+        SwingUI.processButton.setText("Processing data...");
+        //SwingUI.textArea.setText(100*" ");
 
         long sumProcessTime = 0;
         long sumMessageRates = 0;
@@ -38,7 +42,8 @@ public class ProcessingThread implements Runnable {
         
         boolean primed = false;
         double timeStart = 0;
-        double processTime = 2d*(0.000000001d); //Change this to the input from the window
+        //double processTime = 2d*(0.000000001d); //Change this to the input from the window
+        double processTime = process_time;
         DataAnalyzer analyzer = new DataAnalyzer();
         LinkedBlockingQueue<double[]> bufferedMessages = new LinkedBlockingQueue<double[]>();
         
@@ -112,6 +117,9 @@ public class ProcessingThread implements Runnable {
         SwingUI.textArea.append("Average latency (ns): " + (double) sumProcessTime / sumMessageRates+"\n");
         SwingUI.textArea.append("Throughput (Messages/sec): " + (double) sumMessageRates / (sumProcessTime *1e-9)+"\n");
         SwingUI.textArea.append(analyzer.printStats());
+
         SwingUI.uploadButton.setEnabled(true);
+        SwingUI.processButton.setEnabled(true);
+        SwingUI.processButton.setText("Process Data");
     }
 }
