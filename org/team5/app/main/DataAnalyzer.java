@@ -21,12 +21,12 @@ public class DataAnalyzer implements IThreadIO {
     
     //Dummy function because nothing should take a DataPoint from this
     //Honestly should throw an error if even called.
-    public DataPoint out(){
+    public DataPoint pull(){
         return NULL;
     }
     
     //Takes a DataPoint and adds consolidates it's data
-    public void in(DataPoint p){
+    public void push(DataPoint p){
         this.writeData(p.timeIn, p.timeOut);
     }
     
