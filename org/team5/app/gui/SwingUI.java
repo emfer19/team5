@@ -13,8 +13,10 @@ import java.util.concurrent.BlockingQueue;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-public class SwingUI extends JFrame implements FocusListener, ActionListener, ItemListener {
+public class SwingUI extends JFrame implements FocusListener, ActionListener, ItemListener, ChangeListener {
 
     private static JProgressBar progressBar;
     private JPanel mainWindow;
@@ -25,6 +27,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
     private JLabel filePathLabel, defaultBufferSize, defaultProcessTime;
     private JTextField bufferSize, processTime;
     private JCheckBox microsecondData;
+    private JSpinner numberOfProcessors;
     public static JTextArea textArea;
 
     //Get dimension of any screen
@@ -95,9 +98,20 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
 
         //initialize checkbox for microsecond data
         microsecondData = new JCheckBox("Check this box if data is already in Microseconds");
-        microsecondData.setMnemonic(KeyEvent.VK_MS);
         microsecondData.addItemListener(this);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        topInputPanel.add(microsecondData, gbc);
 
+        numberOfProcessors = new JSpinner(new SpinnerNumberModel(1,1,100,1));
+        numberOfProcessors.addChangeListener(this);
+        JFormattedTextField tf = ((JSpinner.DefaultEditor) numberOfProcessors.getEditor()).getTextField();
+        tf.setEditable(false);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 2;
+        gbc.gridy = 3;
+        topInputPanel.add(numberOfProcessors, gbc);
 
         filePathLabel = new JLabel();
         filePathLabel.setVisible(false);
@@ -112,7 +126,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
         progressBar.setStringPainted(true);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 5;
         gbc.gridwidth = 3;
         topInputPanel.add(progressBar, gbc);
 
@@ -122,20 +136,20 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 7;
         topInputPanel.add(processButton, gbc);
 
         defaultBufferSize = new JLabel();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 7;
         gbc.gridwidth = 3;
         topInputPanel.add(defaultBufferSize, gbc);
 
         defaultProcessTime = new JLabel();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 9;
         gbc.gridwidth = 3;
         topInputPanel.add(defaultProcessTime, gbc);
 
@@ -273,6 +287,11 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
             //run code to turn data into microsecond and then run processor code
         }
 
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e){
+        //for the value, run the processor creator that many times?? or save the value here?
     }
 
     /**
