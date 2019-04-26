@@ -27,7 +27,9 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
     private JLabel filePathLabel, defaultBufferSize, defaultProcessTime;
     private JTextField bufferSize, processTime;
     private JCheckBox microsecondData;
-    private JSpinner numberOfProcessors;
+    private JSpinner numberOfProcessorsSpinner;
+    public Boolean ratePreference; // if true in microseconds, if false in seconds
+    public int processorNumber;
     public static JTextArea textArea;
 
     //Get dimension of any screen
@@ -104,14 +106,14 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
         gbc.gridy = 3;
         topInputPanel.add(microsecondData, gbc);
 
-        numberOfProcessors = new JSpinner(new SpinnerNumberModel(1,1,100,1));
-        numberOfProcessors.addChangeListener(this);
-        JFormattedTextField tf = ((JSpinner.DefaultEditor) numberOfProcessors.getEditor()).getTextField();
+        numberOfProcessorsSpinner = new JSpinner(new SpinnerNumberModel(1,1,100,1));
+        numberOfProcessorsSpinner.addChangeListener(this);
+        JFormattedTextField tf = ((JSpinner.DefaultEditor) numberOfProcessorsSpinner.getEditor()).getTextField();
         tf.setEditable(false);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 2;
         gbc.gridy = 3;
-        topInputPanel.add(numberOfProcessors, gbc);
+        topInputPanel.add(numberOfProcessorsSpinner, gbc);
 
         filePathLabel = new JLabel();
         filePathLabel.setVisible(false);
@@ -280,18 +282,18 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
     @Override
     public void itemStateChanged(ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED) {
-            //run microsecond processor code
+            ratePreference = Boolean.TRUE;
         }
 
         if (e.getStateChange() == ItemEvent.DESELECTED) {
-            //run code to turn data into microsecond and then run processor code
+            ratePreference = Boolean.FALSE;
         }
 
     }
 
     @Override
     public void stateChanged(ChangeEvent e){
-        //for the value, run the processor creator that many times?? or save the value here?
+        //set processorNumber to whatever the value is in the spinner
     }
 
     /**
