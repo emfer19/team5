@@ -7,18 +7,20 @@ import java.util.concurrent.BlockingQueue;
 
 import java.lang.System;
 
-public class InputThread implements Runnable, IThreadIO {
+public class BufferThread implements Runnable, IThreadIO {
 
     private CSVReader reader;
     private BlockingQueue<DataPoint> buffer;
+    private IThreadIO outstream;
+    private IThreadIO instream;
 
     /**
      * @param buffer the blocking queue buffer that holds message rates per time
      * @param reader the csv objects
      */
-    public InputThread(BlockingQueue<DataPoint> buffer, CSVReader reader) {
+    public BufferThread() {
         this.reader = reader;
-        this.buffer = buffer;
+        this.buffer = new BlockingQueue<DataPoint>(1000) buffer;
     }
 
     /**
@@ -72,11 +74,22 @@ public class InputThread implements Runnable, IThreadIO {
     
     //Returns the next point in the queue currently
     public DataPoint pull(){
-    
+        return this.remove();
     }
     
     //Takes the input and adds it to the queue
     public void push(DataPoint p){
-    
+        this.buffer.put(p);
     }
+
+    //Sets the output target of this thread
+    public void setOutstream(IThreadIO obj){
+        this.outstream = obj;
+    }
+
+    //Sets the intake target of this thread
+    public void setInstream(IThreadIO obj){
+        this.instream = obj;
+    }
+    
 }

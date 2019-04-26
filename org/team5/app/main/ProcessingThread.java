@@ -18,13 +18,13 @@ public class ProcessingThread implements Runnable, IThreadIO {
     
     //Is dummy because processor takes in its own time
     //should probably throw and error
-    public void in(DataPoint p){
+    public void push(DataPoint p){
         return;
     }
     
     //Is dummy because processor pushed data forward at its own time
     //should probably throw an error
-    public DataPoint out(){
+    public DataPoint pull(){
         return NULL;
     }
 
