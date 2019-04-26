@@ -13,6 +13,8 @@ public class InputThread implements Runnable, IThreadIO {
     private BlockingQueue<DataPoint> buffer;
 
     /**
+     * This thread is for properly pushing csv data into the first buffer.
+     *
      * @param buffer the blocking queue buffer that holds message rates per time
      * @param reader the csv objects
      */
