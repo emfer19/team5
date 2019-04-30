@@ -238,6 +238,13 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
     }
 
     /**
+     * used to access rate preference in main
+     */
+    public boolean getRatePref() {
+        return ratePreference;
+    }
+
+    /**
      * Invoked when a component gains the keyboard focus.
      *
      * @param e
@@ -288,12 +295,12 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
         if (e.getStateChange() == ItemEvent.DESELECTED) {
             ratePreference = Boolean.FALSE;
         }
-
     }
 
     @Override
     public void stateChanged(ChangeEvent e){
         //set processorNumber to whatever the value is in the spinner
+
     }
 
     /**
