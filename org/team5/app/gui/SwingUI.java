@@ -245,6 +245,11 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
     }
 
     /**
+     * used to access processor count in main
+     */
+    public int getProcessorNumber() { return processorNumber;}
+
+    /**
      * Invoked when a component gains the keyboard focus.
      *
      * @param e
