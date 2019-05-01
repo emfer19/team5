@@ -44,7 +44,7 @@ public class InputThread implements Runnable {
             for (int j=0; j<1000; j++){
                 //Start queueing up the message rate in a separate thread
                 try {
-                    Thread.sleep(1); //Sleep for a millisecond before adding anything 
+                    Thread.sleep(1); //Sleep for a millisecond before adding anything
                     //get the time and the rate over 1000 and place it in buffer
                     buffer.put(new DataPoint(System.nanoTime(), rate));
                     //System.out.println("Put message rate "+reader.dataPoints.get(i).getValue());

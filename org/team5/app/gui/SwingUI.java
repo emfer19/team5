@@ -18,7 +18,7 @@ import javax.swing.event.ChangeListener;
 
 public class SwingUI extends JFrame implements FocusListener, ActionListener, ItemListener, ChangeListener {
 
-    private static JProgressBar progressBar;
+    public static JProgressBar progressBar;
     private JPanel mainWindow;
     private JPanel topInputPanel;
     private JPanel bottomOutputPanel;
@@ -58,13 +58,13 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
 
         //Setting frame properties
         setTitle("Processor");
-        setSize(getScreenWidth() / 2 + 100, getScreenHeight() / 2 + 100);
+        setSize(getScreenWidth() / 2 + 100, getScreenHeight() / 2 + 200);
         setLocationRelativeTo(null);
 
         GridBagConstraints gbc = new GridBagConstraints();
 
         topInputPanel = new JPanel(new GridBagLayout());
-        topInputPanel.setPreferredSize(new Dimension(getScreenWidth() / 2, getScreenHeight() / 4));
+        //topInputPanel.setPreferredSize(new Dimension(getScreenWidth() / 2, getScreenHeight() / 4));
 
         //Set titled border for top panel
         TitledBorder title = BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Input");
@@ -106,7 +106,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
         gbc.gridy = 3;
         topInputPanel.add(microsecondData, gbc);
 
-        numberOfProcessorsSpinner = new JSpinner(new SpinnerNumberModel(1,1,100,1));
+        numberOfProcessorsSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
         numberOfProcessorsSpinner.addChangeListener(this);
         JFormattedTextField tf = ((JSpinner.DefaultEditor) numberOfProcessorsSpinner.getEditor()).getTextField();
         tf.setEditable(false);
@@ -125,7 +125,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
 
         //Initialize the progress bar
         progressBar = new JProgressBar();
-        progressBar.setStringPainted(true);
+        progressBar.setVisible(false);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 5;
@@ -144,7 +144,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
         defaultBufferSize = new JLabel();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy = 7;
+        gbc.gridy = 8;
         gbc.gridwidth = 3;
         topInputPanel.add(defaultBufferSize, gbc);
 
@@ -209,10 +209,25 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
      */
     private void startProcessing(String csvFilePath) {
 
-        // A blocking queue buffer if size 1000 that is thread safe. It supports operations that wait for
+        if (!bufferSize.getText().isEmpty() && !bufferSize.getText().equals(BUFFER_SIZE_HINT)) {
+            defaultBufferSize.setText("");
+        } else {
+            String text = "Using default buffer size of: " + DEFAULT_BUFFER_SIZE + " messages";
+            defaultBufferSize.setText(text);
+        }
+
+        if (processTime.getText().isEmpty() || processTime.getText().equals(PROCESS_TIME_HINT)) {
+            String text = "Using default process time of: " + DEFAULT_PROCESS_TIME + " millisecond";
+            defaultProcessTime.setText(text);
+        } else {
+            defaultProcessTime.setText("");
+        }
+
+        // A blocking queue buffer of size 1000 that is thread safe. It supports operations that wait for
         // the queue to become non-empty when retrieving an element, and wait for space to become available
         // in the queue when storing an element.
-        //int buffer_size = Integer.parseInt(bufferSize.getText())DEFAULT_BUFFER_SIZE
+        // int buffer_size = Integer.parseInt(bufferSize.getText())DEFAULT_BUFFER_SIZE
+        // NOTE: if no buffer size is passed from the GUI, app uses the DEFAULT_BUFFER_SIZE of 1 million messages
         String buff_size = bufferSize.getText();
         int buff_size_int = (buff_size != null && !buff_size.equals("") && !buff_size.equals(BUFFER_SIZE_HINT)) ? Integer.parseInt(buff_size) : getDefaultBufferSize();
         BlockingQueue<DataPoint> buffer = new ArrayBlockingQueue<>(buff_size_int, true);
@@ -226,15 +241,17 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
         //Create the processing thread to fetch data from buffer concurrently
         String process_time = processTime.getText();
         double process_time_int = (process_time != null && !process_time.equals("") && !process_time.equals(PROCESS_TIME_HINT)) ? Double.parseDouble(process_time) : getDefaultProcessTime();
+        System.out.println("process_time_int: " + process_time_int);
         ProcessingThread processingThread = new ProcessingThread(buffer, process_time_int);
-
-        // -1 added to cater for the extra (-1,-1) data point added to the array list in CSVReader.java class
-        progressBar.setMaximum(reader.getDataSize() - 1);
 
         //Start the input thread
         new Thread(inputThread).start();
         //Start the processing thread
         new Thread(processingThread).start();
+
+        //kick off progressbar
+        progressBar.setIndeterminate(true);
+        progressBar.setVisible(true);
     }
 
     /**
@@ -247,7 +264,9 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
     /**
      * used to access processor count in main
      */
-    public int getProcessorNumber() { return processorNumber;}
+    public int getProcessorNumber() {
+        return processorNumber;
+    }
 
     /**
      * Invoked when a component gains the keyboard focus.
@@ -303,12 +322,12 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
     }
 
     @Override
-    public void stateChanged(ChangeEvent e){
+    public void stateChanged(ChangeEvent e) {
         //set processorNumber to whatever the value is in the spinner
         JSpinner spinner = (JSpinner) e.getSource();
 
         // Get the new value
-        processorNumber = (int)spinner.getValue();
+        processorNumber = (int) spinner.getValue();
     }
 
     /**
@@ -332,30 +351,28 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
                             filePathLabel.setVisible(true);
                         } else {
                             JOptionPane.showMessageDialog(this, "Not a CSV file. Try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                            csvFilePath="";
+                            csvFilePath = "";
                         }
                     } catch (StringIndexOutOfBoundsException ex) {
                         JOptionPane.showMessageDialog(this, "Not a valid file type. Try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                        csvFilePath="";
+                        csvFilePath = "";
                         ex.printStackTrace();
                     }
                 }
             }
-        }
-        else{
-            if(!csvFilePath.equals(""))
+        } else {
+
+            if (!csvFilePath.equals(""))
                 startProcessing(csvFilePath);
             else
                 JOptionPane.showMessageDialog(this, "Upload your CSV data file first." +
-                        "\n\n(Optional) Specify buffer size and process time," +
-                        "\nor use the default values of "+DEFAULT_BUFFER_SIZE+" messages and "+DEFAULT_PROCESS_TIME+" millisecond",
+                                "\n\n(Optional) Specify buffer size and process time," +
+                                "\nor use the default values of " + DEFAULT_BUFFER_SIZE + " messages and " + DEFAULT_PROCESS_TIME + " millisecond",
                         "Message", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     public int getDefaultBufferSize() {
-        String text = "Using default buffer size of: " + DEFAULT_BUFFER_SIZE + " messages";
-        defaultBufferSize.setText(text);
         return DEFAULT_BUFFER_SIZE;
     }
 
