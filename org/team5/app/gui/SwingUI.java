@@ -6,18 +6,17 @@ import org.team5.app.main.InputThread;
 import org.team5.app.main.ProcessingThread;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 import java.io.File;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-public class SwingUI extends JFrame implements FocusListener, ActionListener {
+public class SwingUI extends JFrame implements FocusListener, ActionListener, ItemListener, ChangeListener {
 
     public static JProgressBar progressBar;
     private JPanel mainWindow;
@@ -27,6 +26,10 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
     private JFileChooser csvChooser;
     private JLabel filePathLabel, defaultBufferSize, defaultProcessTime;
     private JTextField bufferSize, processTime;
+    private JCheckBox microsecondData;
+    private JSpinner numberOfProcessorsSpinner;
+    public Boolean ratePreference = Boolean.FALSE; // if true in microseconds, if false in seconds
+    public int processorNumber = 1;
     public static JTextArea textArea;
 
     //Get dimension of any screen
@@ -95,6 +98,23 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         gbc.gridy = 0;
         topInputPanel.add(processTime, gbc);
 
+        //initialize checkbox for microsecond data
+        microsecondData = new JCheckBox("Check this box if data is already in Microseconds");
+        microsecondData.addItemListener(this);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        topInputPanel.add(microsecondData, gbc);
+
+        numberOfProcessorsSpinner = new JSpinner(new SpinnerNumberModel(1,1,100,1));
+        numberOfProcessorsSpinner.addChangeListener(this);
+        JFormattedTextField tf = ((JSpinner.DefaultEditor) numberOfProcessorsSpinner.getEditor()).getTextField();
+        tf.setEditable(false);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 2;
+        gbc.gridy = 3;
+        topInputPanel.add(numberOfProcessorsSpinner, gbc);
+
         filePathLabel = new JLabel();
         filePathLabel.setVisible(false);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -108,7 +128,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         progressBar.setVisible(false);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 5;
         gbc.gridwidth = 3;
         topInputPanel.add(progressBar, gbc);
 
@@ -118,20 +138,20 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 7;
         topInputPanel.add(processButton, gbc);
 
         defaultBufferSize = new JLabel();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 7;
         gbc.gridwidth = 3;
         topInputPanel.add(defaultBufferSize, gbc);
 
         defaultProcessTime = new JLabel();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 9;
         gbc.gridwidth = 3;
         topInputPanel.add(defaultProcessTime, gbc);
 
@@ -201,10 +221,10 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         //Read the CSV from the file system
         CSVReader reader = new CSVReader(csvFilePath);
 
-        //Creat the input thread to load the csv into the buffer
+        //Create the input thread to load the csv into the buffer
         InputThread inputThread = new InputThread(buffer, reader);
 
-        //Creat the processing thread to fetch data from buffer concurrently
+        //Create the processing thread to fetch data from buffer concurrently
         String process_time = processTime.getText();
         double process_time_int = (process_time != null && !process_time.equals("") && !process_time.equals(PROCESS_TIME_HINT)) ? Double.parseDouble(process_time) : getDefaultProcessTime();
         ProcessingThread processingThread = new ProcessingThread(buffer, process_time_int);
@@ -218,6 +238,18 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         progressBar.setIndeterminate(true);
         progressBar.setVisible(true);
     }
+
+    /**
+     * used to access rate preference in main
+     */
+    public boolean getRatePref() {
+        return ratePreference;
+    }
+
+    /**
+     * used to access processor count in main
+     */
+    public int getProcessorNumber() { return processorNumber;}
 
     /**
      * Invoked when a component gains the keyboard focus.
@@ -259,6 +291,26 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
             }
         }
 
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        if (e.getStateChange() == ItemEvent.SELECTED) {
+            ratePreference = Boolean.TRUE;
+        }
+
+        if (e.getStateChange() == ItemEvent.DESELECTED) {
+            ratePreference = Boolean.FALSE;
+        }
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e){
+        //set processorNumber to whatever the value is in the spinner
+        JSpinner spinner = (JSpinner) e.getSource();
+
+        // Get the new value
+        processorNumber = (int)spinner.getValue();
     }
 
     /**
