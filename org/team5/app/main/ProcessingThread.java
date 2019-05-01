@@ -38,7 +38,6 @@ public class ProcessingThread implements Runnable {
         long sumProcessTime = 0;
         long sumMessageRates = 0;
         long sleepTime = 150; //in millisecond
-        int progressBarUpdater = 0;
         
         boolean primed = false;
         double timeStart = 0;
@@ -104,22 +103,22 @@ public class ProcessingThread implements Runnable {
 
                 sumProcessTime += estimatedTime;
 
-                progressBarUpdater++;
-
-                SwingUI.updateProgressBar(progressBarUpdater);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         
-        SwingUI.textArea.append("Total latency (ns): " + sumProcessTime+"\n");
-        SwingUI.textArea.append("No of Messages: " + sumMessageRates+"\n");
-        SwingUI.textArea.append("Average latency (ns): " + (double) sumProcessTime / sumMessageRates+"\n");
-        SwingUI.textArea.append("Throughput (Messages/sec): " + (double) sumMessageRates / (sumProcessTime *1e-9)+"\n");
-        SwingUI.textArea.append(analyzer.printStats());
+//        SwingUI.textArea.append("Total latency (ns): " + sumProcessTime+"\n");
+//        SwingUI.textArea.append("No of Messages: " + sumMessageRates+"\n");
+//        SwingUI.textArea.append("Average latency (ns): " + (double) sumProcessTime / sumMessageRates+"\n");
+//        SwingUI.textArea.append("Throughput (Messages/sec): " + (double) sumMessageRates / (sumProcessTime *1e-9)+"\n");
+//        SwingUI.textArea.append(analyzer.printStats());
 
         SwingUI.uploadButton.setEnabled(true);
         SwingUI.processButton.setEnabled(true);
         SwingUI.processButton.setText("Process Data");
+        SwingUI.progressBar.setValue(SwingUI.progressBar.getMinimum());
+        SwingUI.progressBar.setIndeterminate(false);
+        SwingUI.progressBar.setVisible(false);
     }
 }

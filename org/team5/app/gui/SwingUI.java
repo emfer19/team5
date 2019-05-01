@@ -19,7 +19,7 @@ import javax.swing.border.TitledBorder;
 
 public class SwingUI extends JFrame implements FocusListener, ActionListener {
 
-    private static JProgressBar progressBar;
+    public static JProgressBar progressBar;
     private JPanel mainWindow;
     private JPanel topInputPanel;
     private JPanel bottomOutputPanel;
@@ -105,7 +105,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
 
         //Initialize the progress bar
         progressBar = new JProgressBar();
-        progressBar.setStringPainted(true);
+        progressBar.setVisible(false);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -189,10 +189,11 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
      */
     private void startProcessing(String csvFilePath) {
 
-        // A blocking queue buffer if size 1000 that is thread safe. It supports operations that wait for
+        // A blocking queue buffer of size 1000 that is thread safe. It supports operations that wait for
         // the queue to become non-empty when retrieving an element, and wait for space to become available
         // in the queue when storing an element.
-        //int buffer_size = Integer.parseInt(bufferSize.getText())DEFAULT_BUFFER_SIZE
+        // int buffer_size = Integer.parseInt(bufferSize.getText())DEFAULT_BUFFER_SIZE
+        // NOTE: if no buffer size is passed from the GUI, app uses the DEFAULT_BUFFER_SIZE of 1 million messages
         String buff_size = bufferSize.getText();
         int buff_size_int = (buff_size != null && !buff_size.equals("") && !buff_size.equals(BUFFER_SIZE_HINT)) ? Integer.parseInt(buff_size) : getDefaultBufferSize();
         BlockingQueue<DataPoint> buffer = new ArrayBlockingQueue<>(buff_size_int, true);
@@ -208,13 +209,14 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener {
         double process_time_int = (process_time != null && !process_time.equals("") && !process_time.equals(PROCESS_TIME_HINT)) ? Double.parseDouble(process_time) : getDefaultProcessTime();
         ProcessingThread processingThread = new ProcessingThread(buffer, process_time_int);
 
-        // -1 added to cater for the extra (-1,-1) data point added to the array list in CSVReader.java class
-        progressBar.setMaximum(reader.getDataSize() - 1);
-
         //Start the input thread
         new Thread(inputThread).start();
         //Start the processing thread
         new Thread(processingThread).start();
+
+        //kick off progressbar
+        progressBar.setIndeterminate(true);
+        progressBar.setVisible(true);
     }
 
     /**
