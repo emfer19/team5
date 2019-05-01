@@ -101,7 +101,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
         topInputPanel.add(processTime, gbc);
 
         //initialize checkbox for microsecond data
-        microsecondData = new JCheckBox("Check this box if data is already in Microseconds");
+        microsecondData = new JCheckBox("Data is already in Microseconds");
         microsecondData.addItemListener(this);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
