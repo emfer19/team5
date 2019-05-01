@@ -15,6 +15,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.JTextComponent;
 
 public class SwingUI extends JFrame implements FocusListener, ActionListener, ItemListener, ChangeListener {
 
@@ -28,6 +29,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
     private JTextField bufferSize, processTime;
     private JCheckBox microsecondData;
     private JSpinner numberOfProcessorsSpinner;
+    private JLabel processorSpinnerTip;
     public Boolean ratePreference = Boolean.FALSE; // if true in microseconds, if false in seconds
     public int processorNumber = 1;
     public static JTextArea textArea;
@@ -114,6 +116,12 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
         gbc.gridx = 2;
         gbc.gridy = 3;
         topInputPanel.add(numberOfProcessorsSpinner, gbc);
+
+        processorSpinnerTip = new JLabel("# of Processors:");
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        topInputPanel.add(processorSpinnerTip, gbc);
 
         filePathLabel = new JLabel();
         filePathLabel.setVisible(false);
