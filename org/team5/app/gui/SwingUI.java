@@ -28,8 +28,8 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
     private JTextField bufferSize, processTime;
     private JCheckBox microsecondData;
     private JSpinner numberOfProcessorsSpinner;
-    public Boolean ratePreference; // if true in microseconds, if false in seconds
-    public int processorNumber;
+    public Boolean ratePreference = Boolean.FALSE; // if true in microseconds, if false in seconds
+    public int processorNumber = 1;
     public static JTextArea textArea;
 
     //Get dimension of any screen
@@ -305,7 +305,10 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
     @Override
     public void stateChanged(ChangeEvent e){
         //set processorNumber to whatever the value is in the spinner
+        JSpinner spinner = (JSpinner) e.getSource();
 
+        // Get the new value
+        processorNumber = (int)spinner.getValue();
     }
 
     /**
