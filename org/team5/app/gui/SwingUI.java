@@ -220,10 +220,10 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
         //Read the CSV from the file system
         CSVReader reader = new CSVReader(csvFilePath);
 
-        //Creat the input thread to load the csv into the buffer
+        //Create the input thread to load the csv into the buffer
         InputThread inputThread = new InputThread(buffer, reader);
 
-        //Creat the processing thread to fetch data from buffer concurrently
+        //Create the processing thread to fetch data from buffer concurrently
         String process_time = processTime.getText();
         double process_time_int = (process_time != null && !process_time.equals("") && !process_time.equals(PROCESS_TIME_HINT)) ? Double.parseDouble(process_time) : getDefaultProcessTime();
         ProcessingThread processingThread = new ProcessingThread(buffer, process_time_int);
