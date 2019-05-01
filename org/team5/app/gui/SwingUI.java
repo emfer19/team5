@@ -117,7 +117,7 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
         gbc.gridy = 3;
         topInputPanel.add(numberOfProcessorsSpinner, gbc);
 
-        processorSpinnerTip = new JLabel("# of Processors:");
+        processorSpinnerTip = new JLabel("# of Processors (Max. 100):");
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 1;
         gbc.gridy = 3;
