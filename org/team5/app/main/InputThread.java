@@ -7,7 +7,7 @@ import java.util.concurrent.BlockingQueue;
 
 import java.lang.System;
 
-public class InputThread implements Runnable, IThreadIO {
+public class InputThread implements IThreadIO, Runnable{
 
     private CSVReader reader;
     private IThreadIO outstream;
@@ -22,6 +22,10 @@ public class InputThread implements Runnable, IThreadIO {
      */
     public InputThread(CSVReader reader) {
         this.reader = reader;
+    }
+
+    public void go(){
+//        start();
     }
 
     /**
@@ -46,7 +50,7 @@ public class InputThread implements Runnable, IThreadIO {
         /*----This for loop loops sixty times to repersent one minute----*/
           for ( int k=0; k<60;k++){
           /*----This for loop executs for ~1 second----*/
-            int rate = reader.next().getRate(); //Intake from CSVreader
+            int rate = reader.next().getValue(); //Intake from CSVreader
             for (int j=0; j<1000; j++){
                 //At certain time intervals push a new set of messages into the attached buffer
                 try {
@@ -64,22 +68,10 @@ public class InputThread implements Runnable, IThreadIO {
         System.out.println("InputThread exiting");
     }
 
-    public void checkSize() {
-        System.out.println("Buffer size: " + buffer.size());
-    }
-
-    public DataPoint remove() {
-        try {
-            return buffer.take();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    
     //Returns the next point in the queue currently
     public DataPoint pull(){
     //Dummy because nothing should pull from it
+        return null;    
     }
     
     //Takes the input and adds it to the queue
@@ -93,7 +85,7 @@ public class InputThread implements Runnable, IThreadIO {
         this.outstream = obj;
     }
 
-    public void setInstream(IThreadI obj){
+    public void setInstream(IThreadIO obj){
         this.outstream = obj;
     }
 }

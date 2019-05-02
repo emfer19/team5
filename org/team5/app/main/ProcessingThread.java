@@ -6,13 +6,13 @@ import org.team5.app.gui.SwingUI;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public class ProcessingThread implements Runnable, IThreadIO {
+public class ProcessingThread implements IThreadIO, Runnable{
 
-    public double process_time;
+    public int process_time;
     public IThreadIO instream;
     public IThreadIO outstream;
 
-    public ProcessingThread(double process_time) {
+    public ProcessingThread(int process_time) {
         this.process_time = process_time;
     }
     
@@ -25,11 +25,11 @@ public class ProcessingThread implements Runnable, IThreadIO {
     //Is dummy because processor pushed data forward at its own time
     //should probably throw an error
     public DataPoint pull(){
-        return NULL;
+        return null;
     }
 
     //Sets the intake source of this thread
-    public void setInStream(IThreadIO obj){
+    public void setInstream(IThreadIO obj){
         this.instream = obj;
     }
 
@@ -58,9 +58,9 @@ public class ProcessingThread implements Runnable, IThreadIO {
             if(currentPoint.getValue() == -1){
                 done = true;
             }
-            for(int i=0;i<currentPoint.getValue;i++){
-                outstream.push(new DataPoint(currentPoint.timeIn, 1));
-                Thread.sleep(0l, this.processingTime);
+            for(int i=0; i<currentPoint.getValue(); i++){
+                outstream.push(new DataPoint(currentPoint.getTimeIn(), 1));
+                Thread.sleep(0l, this.process_time);
             }
         }
     }

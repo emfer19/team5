@@ -3,13 +3,13 @@ package org.team5.app.main;
 import org.team5.app.dataprocessing.CSVReader;
 import org.team5.app.dataprocessing.DataPoint;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import java.lang.System;
 
-public class BufferThread implements Runnable, IThreadIO {
+public class BufferThread implements IThreadIO, Runnable{
 
-    private BlockingQueue<DataPoint> buffer;
+    private LinkedBlockingQueue<DataPoint> buffer;
     private IThreadIO outstream;
     private IThreadIO instream;
     private int cap;
@@ -24,7 +24,7 @@ public class BufferThread implements Runnable, IThreadIO {
         this.cap = capacity;
         this.currentTotal = 0;
         this.maxOverflow = 0;
-        this.buffer = new BlockingQueue<DataPoint>(1000) buffer;
+        this.buffer = new LinkedBlockingQueue<DataPoint>(1000);
     }
 
     /**
@@ -64,9 +64,9 @@ public class BufferThread implements Runnable, IThreadIO {
     //Adds input to the Q and updates currentTotal.
     //Also checks for/updates overflow
     public void push(DataPoint p){
-        this.currentValue += p.getValue;
-        if(this.currentValue > this.cap){
-            this.maxOverflow = this.currentValue-this.cap;
+        this.currentTotal += p.getValue();
+        if(this.currentTotal > this.cap){
+            this.maxOverflow = this.currentTotal-this.cap;
         }
         this.buffer.put(p);
     }

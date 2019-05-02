@@ -2,8 +2,9 @@ package org.team5.app.main;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.lang.Math.*;
+import java.lang.*;
 
-!IMPORT DATAPOINT HERE!
+import org.team5.app.dataprocessing.DataPoint;
 
 /* Author: Holden D
  * DataAnalzyer
@@ -15,28 +16,33 @@ public class DataAnalyzer implements IThreadIO {
     private double total;
     private double max;
     private double min;
+    private IThreadIO instream;
+    private IThreadIO outstream;
+    
     private ArrayList<Double> data = new ArrayList<Double>();
         
     public DataAnalyzer(){}
+
+    public void start(){}
     
     //Dummy function because nothing should take a DataPoint from this
     //Honestly should throw an error if even called.
     public DataPoint pull(){
-        return NULL;
+        return null;
     }
 
-    public setInstream(IThreadIO obj){
+    public void setInstream(IThreadIO obj){
         this.instream = obj;
     }
 
-    public setOutstream(IThreadIO){
+    public void setOutstream(IThreadIO obj){
         this.outstream = obj;
     }
     
     
     //Takes a DataPoint and adds consolidates it's data
     public void push(DataPoint p){
-        this.writeData(p.timeIn, System.nanotime());
+        this.writeData(p.getTimeIn(), System.nanoTime());
     }
     
     //Takes two doubles and  stores the data for later calculations
