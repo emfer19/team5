@@ -13,5 +13,8 @@ public interface IThreadIO {
 
 public void push(DataPoint p); //should be called to put data into the thread
 public DataPont pull(); //should be called to receive the next piece of data from that object
+public void setInstream(IThreadIO obj);
+public void setOutStream(IThreadIO obj);
+
 
 }

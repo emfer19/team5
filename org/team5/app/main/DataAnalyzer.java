@@ -24,6 +24,15 @@ public class DataAnalyzer implements IThreadIO {
     public DataPoint pull(){
         return NULL;
     }
+
+    public setInstream(IThreadIO obj){
+        this.instream = obj;
+    }
+
+    public setOutstream(IThreadIO){
+        this.outstream = obj;
+    }
+    
     
     //Takes a DataPoint and adds consolidates it's data
     public void push(DataPoint p){

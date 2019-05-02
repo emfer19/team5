@@ -9,17 +9,21 @@ import java.lang.System;
 
 public class BufferThread implements Runnable, IThreadIO {
 
-    private CSVReader reader;
     private BlockingQueue<DataPoint> buffer;
     private IThreadIO outstream;
     private IThreadIO instream;
+    private int cap;
+    private int currentTotal;
+    private int maxOverflow;
 
     /**
      * @param buffer the blocking queue buffer that holds message rates per time
      * @param reader the csv objects
      */
-    public BufferThread() {
-        this.reader = reader;
+    public BufferThread(int capacity) {
+        this.cap = capacity;
+        this.currentTotal = 0;
+        this.maxOverflow = 0;
         this.buffer = new BlockingQueue<DataPoint>(1000) buffer;
     }
 
@@ -36,31 +40,9 @@ public class BufferThread implements Runnable, IThreadIO {
      */
     @Override
     public void run() {
-        System.out.println("InputThread running");
-
-        for (int i = 0; i < reader.dataPoints.size(); i++) {
-            
-            //This for loop repersents using the given rate in millisecond 
-            //increments for one second.
-            int rate = reader.dataPoints.get(i).getValue()/1000; //Take the floor/ceiling of this
-            for (int j=0; j<1000; j++){
-                //Start queueing up the message rate in a separate thread
-                try {
-                    Thread.sleep(1); //Sleep for a millisecond before adding anything 
-                    //get the time and the rate over 1000 and place it in buffer
-                    buffer.put(new DataPoint(System.nanoTime(), rate));
-                    //System.out.println("Put message rate "+reader.dataPoints.get(i).getValue());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        System.out.println("InputThread exiting");
-    }
-
-    public void checkSize() {
-        System.out.println("Buffer size: " + buffer.size());
+        System.out.println("Buffer thread running");
+        //Periodically check the buffer status
+        //Should this have an outstream to the DataAnalyzer for overflow analysis?
     }
 
     public DataPoint remove() {
@@ -71,14 +53,21 @@ public class BufferThread implements Runnable, IThreadIO {
         }
         return null;
     }
-    
-    //Returns the next point in the queue currently
+
+    //Returns the next point in the queue currently and updates current total
     public DataPoint pull(){
-        return this.remove();
+        DataPoint p = this.remove();
+        this.currentTotal -= p.getValue();
+        return p;
     }
-    
-    //Takes the input and adds it to the queue
+
+    //Adds input to the Q and updates currentTotal.
+    //Also checks for/updates overflow
     public void push(DataPoint p){
+        this.currentValue += p.getValue;
+        if(this.currentValue > this.cap){
+            this.maxOverflow = this.currentValue-this.cap;
+        }
         this.buffer.put(p);
     }
 
@@ -91,5 +80,5 @@ public class BufferThread implements Runnable, IThreadIO {
     public void setInstream(IThreadIO obj){
         this.instream = obj;
     }
-    
+
 }
