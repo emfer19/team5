@@ -10,6 +10,8 @@ public class ProcessingThread implements Runnable, IThreadIO {
 
     public BlockingQueue<DataPoint> buffer;
     public double process_time;
+    public IThreadIO instream;
+    public IThreadIO outstream;
 
     public ProcessingThread(BlockingQueue<DataPoint> buffer, double process_time) {
         this.buffer = buffer;
@@ -26,6 +28,16 @@ public class ProcessingThread implements Runnable, IThreadIO {
     //should probably throw an error
     public DataPoint pull(){
         return NULL;
+    }
+
+    //Sets the intake source of this thread
+    public void setInStream(IThreadIO obj){
+        this.instream = obj;
+    }
+
+    //Sets the output target of this thread
+    public void setOutstream(IThreadIO obj){
+        this.outstream = obj;
     }
 
     /**
