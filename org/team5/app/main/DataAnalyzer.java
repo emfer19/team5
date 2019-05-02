@@ -36,7 +36,7 @@ public class DataAnalyzer implements IThreadIO {
     
     //Takes a DataPoint and adds consolidates it's data
     public void push(DataPoint p){
-        this.writeData(p.timeIn, p.timeOut);
+        this.writeData(p.timeIn, System.nanotime());
     }
     
     //Takes two doubles and  stores the data for later calculations
