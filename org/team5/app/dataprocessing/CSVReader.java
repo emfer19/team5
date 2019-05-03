@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.team5.app.main.IThreadIO;
+
 /* Class: CSVReader
 *   A class for parsing a csv file into DataPoint's from the Market Data Peaks
 *   website. Use a string repersenting the path to the relevent csv file to
@@ -18,7 +20,7 @@ import java.nio.file.Paths;
 *   @Created: Feb. 15, 2019
 *   Resource Used: http://www.java67.com/2015/08/how-to-load-data-from-csv-file-in-java.html
 */
-public class CSVReader implements IDataHandler {
+public class CSVReader implements IDataHandler{
 
     private Path filePath;
     public ArrayList<DataPoint> dataPoints;
@@ -80,14 +82,13 @@ public class CSVReader implements IDataHandler {
         return dataPoints.size();
     }
 
-    public IDataObject next() {
+    public DataPoint next() {
         if (current < dataPoints.size()) {
             return (dataPoints.get(current++));
         } else {
             return (null);
         }
     }
-
     /*
      * A short main function that may be called to test a simple case by printing
      * some information for a sampled file
