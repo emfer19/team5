@@ -40,8 +40,8 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
     private final String PROCESS_TIME_HINT = "Enter process time";
     private final String BUFFER_SIZE_HINT = "Enter buffer size";
 
-    private final int DEFAULT_BUFFER_SIZE = 1000000;
-    private final double DEFAULT_PROCESS_TIME = 1.0; //in millisecond
+    public final int DEFAULT_BUFFER_SIZE = 1000000;
+    public final double DEFAULT_PROCESS_TIME = 1.0; //in millisecond
 
     private String csvFilePath = "";
 
