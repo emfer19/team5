@@ -7,7 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import java.lang.System;
 
-public class BufferThread implements IThreadIO, Runnable{
+public class BufferThread extends Thread implements IThreadIO{
 
     private LinkedBlockingQueue<DataPoint> buffer;
     private IThreadIO outstream;
@@ -16,10 +16,6 @@ public class BufferThread implements IThreadIO, Runnable{
     private int currentTotal;
     private int maxOverflow;
 
-    /**
-     * @param buffer the blocking queue buffer that holds message rates per time
-     * @param reader the csv objects
-     */
     public BufferThread(int capacity) {
         this.cap = capacity;
         this.currentTotal = 0;
@@ -68,7 +64,11 @@ public class BufferThread implements IThreadIO, Runnable{
         if(this.currentTotal > this.cap){
             this.maxOverflow = this.currentTotal-this.cap;
         }
-        this.buffer.put(p);
+        try {
+            this.buffer.put(p);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     //Sets the output target of this thread

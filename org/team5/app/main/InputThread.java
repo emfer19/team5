@@ -7,7 +7,7 @@ import java.util.concurrent.BlockingQueue;
 
 import java.lang.System;
 
-public class InputThread implements IThreadIO, Runnable{
+public class InputThread extends Thread implements IThreadIO{
 
     private CSVReader reader;
     private IThreadIO outstream;
@@ -17,7 +17,6 @@ public class InputThread implements IThreadIO, Runnable{
      * This thread is for properly pushing csv data into the first buffer.
      * Buffers are passive while this input thread is active.
      *
-     * @param buffer the blocking queue buffer that holds message rates per time
      * @param reader the csv objects
      */
     public InputThread(CSVReader reader) {

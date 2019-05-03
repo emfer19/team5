@@ -6,7 +6,7 @@ import org.team5.app.gui.SwingUI;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public class ProcessingThread implements IThreadIO, Runnable{
+public class ProcessingThread extends Thread implements IThreadIO{
 
     public int process_time;
     public IThreadIO instream;
@@ -60,7 +60,11 @@ public class ProcessingThread implements IThreadIO, Runnable{
             }
             for(int i=0; i<currentPoint.getValue(); i++){
                 outstream.push(new DataPoint(currentPoint.getTimeIn(), 1));
-                Thread.sleep(0l, this.process_time);
+                try {
+                    Thread.sleep(0l, this.process_time);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
