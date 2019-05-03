@@ -2,14 +2,14 @@ package org.team5.app.gui;
 
 import org.team5.app.dataprocessing.CSVReader;
 import org.team5.app.dataprocessing.DataPoint;
-import org.team5.app.main.InputThread;
-import org.team5.app.main.ProcessingThread;
+import org.team5.app.main.*;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -40,8 +40,8 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
     private final String PROCESS_TIME_HINT = "Enter process time";
     private final String BUFFER_SIZE_HINT = "Enter buffer size";
 
-    private final int DEFAULT_BUFFER_SIZE = 1000000;
-    private final double DEFAULT_PROCESS_TIME = 1.0; //in millisecond
+    public final int DEFAULT_BUFFER_SIZE = 1000000;
+    public final double DEFAULT_PROCESS_TIME = 1.0; //in millisecond
 
     private String csvFilePath = "";
 
@@ -243,19 +243,35 @@ public class SwingUI extends JFrame implements FocusListener, ActionListener, It
         //Read the CSV from the file system
         CSVReader reader = new CSVReader(csvFilePath);
 
-        //Create the input thread to load the csv into the buffer
-        InputThread inputThread = new InputThread(buffer, reader);
-
-        //Create the processing thread to fetch data from buffer concurrently
+        //Parse processing input
         String process_time = processTime.getText();
         double process_time_int = (process_time != null && !process_time.equals("") && !process_time.equals(PROCESS_TIME_HINT)) ? Double.parseDouble(process_time) : getDefaultProcessTime();
         System.out.println("process_time_int: " + process_time_int);
-        ProcessingThread processingThread = new ProcessingThread(buffer, process_time_int);
 
-        //Start the input thread
-        new Thread(inputThread).start();
-        //Start the processing thread
-        new Thread(processingThread).start();
+        //Build Simulation/create and connect all the components
+        ArrayList<IThreadIO> components = new ArrayList<IThreadIO>();
+
+        //Create the input thread to load the csv into the first buffer
+        InputThread inputThread = new InputThread(reader);
+        components.add(inputThread);
+        //Create all intermediate buffers and processors
+        for(int i=0;i<this.getProcessorNumber();i++){
+            components.add(new BufferThread(buff_size_int));
+            components.add(new ProcessingThread((int)process_time_int));
+        }
+        //Create DataAnalyzer endpoint
+        DataAnalyzer analyzer = new DataAnalyzer();
+
+        //Connect them all
+        for(int i=1;i<(components.size()-1);i++){
+            components.get(i).setInstream(components.get(i-1));
+            components.get(i).setOutstream(components.get(i+1));
+        }
+
+        //StartThemAll
+        for(int i=0;i<components.size();i++){
+            ((Thread)components.get(i)).start();
+        }
 
         //kick off progressbar
         progressBar.setIndeterminate(true);

@@ -6,14 +6,36 @@ import org.team5.app.gui.SwingUI;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public class ProcessingThread implements Runnable {
+public class ProcessingThread extends Thread implements IThreadIO{
 
-    public BlockingQueue<DataPoint> buffer;
-    public double process_time;
+    public int process_time;
+    public IThreadIO instream;
+    public IThreadIO outstream;
 
-    public ProcessingThread(BlockingQueue<DataPoint> buffer, double process_time) {
-        this.buffer = buffer;
+    public ProcessingThread(int process_time) {
         this.process_time = process_time;
+    }
+    
+    //Is dummy because processor takes in its own time
+    //should probably throw and error
+    public void push(DataPoint p){
+        return;
+    }
+    
+    //Is dummy because processor pushed data forward at its own time
+    //should probably throw an error
+    public DataPoint pull(){
+        return null;
+    }
+
+    //Sets the intake source of this thread
+    public void setInstream(IThreadIO obj){
+        this.instream = obj;
+    }
+
+    //Sets the output target of this thread
+    public void setOutstream(IThreadIO obj){
+        this.outstream = obj;
     }
 
     /**
@@ -30,95 +52,21 @@ public class ProcessingThread implements Runnable {
     @Override
     public void run() {
 
-        SwingUI.uploadButton.setEnabled(false);
-        SwingUI.processButton.setEnabled(false);
-        SwingUI.processButton.setText("Processing data...");
-        //SwingUI.textArea.setText(100*" ");
-
-        long sumProcessTime = 0;
-        long sumMessageRates = 0;
-        long sleepTime = 150; //in millisecond
-        
-        boolean primed = false;
-        double timeStart = 0;
-        //double processTime = 2d*(0.000000001d); //Change this to the input from the window
-        double processTime = process_time;
-        DataAnalyzer analyzer = new DataAnalyzer();
-        LinkedBlockingQueue<double[]> bufferedMessages = new LinkedBlockingQueue<double[]>();
-        
-        try {
-
-            DataPoint messageRate;
-            SimClock clock = new SimClock(processTime);
-            
-            messageRate = buffer.take();
-            double[] message = new double[]{0, 0};
-            //Note: value of -1 marks the end of the buffer content.
-            while (messageRate.getValue() != -1) {
-
-                long startTime = System.nanoTime(); //Get nano time just before removing message data from buffer
-                //-------------------------------
-                // Do some processing around at this point.
-                
-                //First startup
-                if(!primed){
-                    clock.setTime(messageRate.getTimeIn());
-                    timeStart = messageRate.getTimeIn();
-                    bufferedMessages.add(new double[]{messageRate.getValue(), clock.getTime()});
-                    primed = true;
-                }
-                //Updating clock
-               
-                clock.update();
-                if(clock.isNextMinute()){ //If it's a new minute update the message rate
-                    messageRate = buffer.take();
-                }
-                //Adding messages to the buffered data based on the current rate
-                if(clock.isNextSecond()){
-                    bufferedMessages.add(new double[]{messageRate.getValue(), clock.getTime()});
-                }
-               
-                //Updating Data
-                //Update the current set of messages once the program gets through that backlog
-                if(message[0] <= 0){
-                    if(bufferedMessages.peek() != null){message = bufferedMessages.remove();}
-                }
-                else{
-                    message[0]--;
-                }
-                if(clock.getTime() > timeStart+60){
-                    break;
-                }
-                
-                //Recording Stats
-                analyzer.writeData(message[1], clock.getTime());
-                SwingUI.textArea.setText(String.format("%s\nTime left: %.9f", analyzer.printStats(), (startTime+60)-clock.getTime() ) );
-                // Let's just simulate work time with Thread.sleep()
-                //---------------------------------
-                // End simulation
-                //---------------------------------
-
-                long timeNow = System.nanoTime(); //get current nano time after the processing above
-                long estimatedTime = timeNow - startTime; //This gives time spent per message data
-
-                sumProcessTime += estimatedTime;
-
+        DataPoint currentPoint = new DataPoint(0l,0);
+        boolean done = false;
+        while(!done){
+            currentPoint = instream.pull();
+            if(currentPoint.getValue() == -1){
+                done = true;
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            for(int i=0; i<currentPoint.getValue(); i++){
+                outstream.push(new DataPoint(currentPoint.getTimeIn(), 1));
+                try {
+                    Thread.sleep(0l, this.process_time);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        
-//        SwingUI.textArea.append("Total latency (ns): " + sumProcessTime+"\n");
-//        SwingUI.textArea.append("No of Messages: " + sumMessageRates+"\n");
-//        SwingUI.textArea.append("Average latency (ns): " + (double) sumProcessTime / sumMessageRates+"\n");
-//        SwingUI.textArea.append("Throughput (Messages/sec): " + (double) sumMessageRates / (sumProcessTime *1e-9)+"\n");
-//        SwingUI.textArea.append(analyzer.printStats());
-
-        SwingUI.uploadButton.setEnabled(true);
-        SwingUI.processButton.setEnabled(true);
-        SwingUI.processButton.setText("Process Data");
-        SwingUI.progressBar.setValue(SwingUI.progressBar.getMinimum());
-        SwingUI.progressBar.setIndeterminate(false);
-        SwingUI.progressBar.setVisible(false);
     }
 }
