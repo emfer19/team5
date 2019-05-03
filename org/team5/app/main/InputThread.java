@@ -85,6 +85,6 @@ public class InputThread extends Thread implements IThreadIO{
     }
 
     public void setInstream(IThreadIO obj){
-        this.outstream = obj;
+        this.instream = obj;
     }
 }

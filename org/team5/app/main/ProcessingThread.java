@@ -51,6 +51,7 @@ public class ProcessingThread extends Thread implements IThreadIO{
      */
     @Override
     public void run() {
+
         DataPoint currentPoint = new DataPoint(0l,0);
         boolean done = false;
         while(!done){
