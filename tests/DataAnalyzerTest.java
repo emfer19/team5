@@ -1,6 +1,9 @@
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.team5.app.main.DataAnalyzer;
+
+import java.lang.reflect.Method;
 
 import static org.junit.Assert.*;
 
@@ -24,7 +27,9 @@ public class DataAnalyzerTest {
 
     @Test
     public void writeData() {
-        System.out.println(da.printStats());
+        int timeIn  = '3';
+        int timeOut = '5';
+        da.writeData(timeIn,timeOut);
     }
 
     @Test
@@ -47,5 +52,17 @@ public class DataAnalyzerTest {
         double expectedValue = 0.2;
         double actualValue = da.throughput();
         assertEquals(expectedValue, actualValue,0.0);
+    }
+
+    @Test
+    public void testWriteMethodSignature() {
+        try {
+            Class<DataAnalyzer> myClass = DataAnalyzer.class;
+            Method method = myClass.getMethod("writeData", String.class);
+            Class<?> returnClass = method.getReturnType();
+            assertEquals("writeData method returns the wrong type.", returnClass, Void.class);
+        } catch (NoSuchMethodException | SecurityException e) {
+            Assert.fail("writeData method is missing.");
+        }
     }
 }
