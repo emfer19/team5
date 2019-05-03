@@ -12,8 +12,12 @@ public class ProcessingThread extends Thread implements IThreadIO{
     public IThreadIO instream;
     public IThreadIO outstream;
 
-    public ProcessingThread(int process_time) {
-        this.process_time = process_time;
+    public ProcessingThread(int p) {
+        this.process_time = p;
+    }
+    
+    public boolean isRunnable(){
+        return true;
     }
     
     //Is dummy because processor takes in its own time
@@ -52,7 +56,7 @@ public class ProcessingThread extends Thread implements IThreadIO{
     @Override
     public void run() {
 
-        DataPoint currentPoint = new DataPoint(0l,0);
+        DataPoint currentPoint = new DataPoint(0,0);
         boolean done = false;
         while(!done){
             currentPoint = instream.pull();
@@ -62,7 +66,7 @@ public class ProcessingThread extends Thread implements IThreadIO{
             for(int i=0; i<currentPoint.getValue(); i++){
                 outstream.push(new DataPoint(currentPoint.getTimeIn(), 1));
                 try {
-                    Thread.sleep(0l, this.process_time);
+                    Thread.sleep(0, this.process_time);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

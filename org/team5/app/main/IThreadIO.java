@@ -15,6 +15,6 @@ public void push(DataPoint p); //should be called to put data into the thread
 public DataPoint pull(); //should be called to receive the next piece of data from that object
 public void setInstream(IThreadIO obj);
 public void setOutstream(IThreadIO obj);
-//public void go();
+public boolean isRunnable();//Some "threads" are more so end point objects and should not be run
 
 }

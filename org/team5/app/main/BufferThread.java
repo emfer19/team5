@@ -34,6 +34,12 @@ public class BufferThread extends Thread implements IThreadIO{
      * <code>run</code> method to be called in that separately executing
      * thread.
      */
+    
+    //Used by main to know to start it as a thread or not
+    public boolean isRunnable(){
+        return true;
+    }
+    
     @Override
     public void run() {
         System.out.println("Buffer thread running");

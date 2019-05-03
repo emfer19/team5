@@ -23,7 +23,10 @@ public class DataAnalyzer implements IThreadIO {
         
     public DataAnalyzer(){}
 
-    public void start(){}
+    //Is used to prevent main from running it as a thread
+    public boolean isRunnable(){
+        return false;
+    }
     
     //Dummy function because nothing should take a DataPoint from this
     //Honestly should throw an error if even called.

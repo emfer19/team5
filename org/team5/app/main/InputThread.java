@@ -23,10 +23,10 @@ public class InputThread extends Thread implements IThreadIO{
         this.reader = reader;
     }
 
-    public void go(){
-//        start();
+    public boolean isRunnable(){
+        return true;
     }
-
+    
     /**
      * This thread reads the message rates into a blocking queue buffer.
      * A BlockingQueue is a queue that additionally supports operations that wait for
